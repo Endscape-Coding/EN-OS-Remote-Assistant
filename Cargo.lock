@@ -233,6 +233,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "dotenvy"
+version = "0.15.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1aaf95b3e5c8f23aa320147307562d361db0ae0d51242340f558153b4eb2439b"
+
+[[package]]
 name = "dptree"
 version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -258,8 +264,11 @@ checksum = "48c757948c5ede0e46177b7add2e67155f70e33c07fea8284df6576da70b3719"
 name = "en-os-remote-assistant"
 version = "0.1.0"
 dependencies = [
+ "dotenvy",
  "log",
  "pretty_env_logger",
+ "serde",
+ "serde_json",
  "teloxide",
  "tokio",
 ]
