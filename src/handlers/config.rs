@@ -73,7 +73,6 @@ pub fn config_write(config: Config) -> Result<Config, String> {
 }
 
 fn system_lang() -> String {
-    let syslang = env::var("LANG").expect("Ошибка получения языка").to_string().chars().take(2).collect();
-    syslang
+    env::var("LANG").expect("Ошибка получения языка").to_string().chars().take(2).collect()
 }
 
