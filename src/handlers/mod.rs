@@ -17,3 +17,6 @@ pub use lang::{setlang, setlang_callback};
 
 pub mod files;
 pub use files::{cd, ls, download};
+
+pub mod input;
+pub use input::{input};

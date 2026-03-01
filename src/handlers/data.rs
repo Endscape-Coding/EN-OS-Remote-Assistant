@@ -11,24 +11,25 @@ Ready to work!
 "#;
 
 pub const STARTRU: &str = r#"
-<b>EN-OS Remote Assistant v0.2</b>
+<b>EN-OS Remote Assistant v0.3</b>
 
 <i>Доступные команды:</i>
 
-• /start | /help — <i>Вызвать справку</i>
-• /setlang — <i>Выбрать язык</i>
-• /cd <code>folder</code> — <i>Перейти в папку</i>
+• /start | /help - <i>Вызвать справку</i>
+• /setlang - <i>Выбрать язык</i>
+• /cd <code>folder</code> - <i>Перейти в папку</i>
 • /ls — <i>Просмотреть содержимое папкик</i>
-• /download <code>имя файла</code> — <i>Загрузить файл (до 20 МБ)</i>
-• /cmd <code>&lt;args&gt;</code> — <i>Запустить bash-команду</i>
-• /screenshot — <i>Отправить скриншот</i>
+• /download <code>имя файла</code> - <i>Загрузить файл (до 20 МБ)</i>
+• /cmd <code>&lt;команда&gt;</code> - <i>Запустить bash-команду</i>
+• /screenshot - <i>Отправить скриншот</i>
+• /input - <i>Эмуляция ввода</i>
 
 ────────────────────
 <i>Система готова к работе</i>
 "#;
 
 pub const STARTEN: &str = r#"
-<b>EN-OS Remote Assistant v0.2</b>
+<b>EN-OS Remote Assistant v0.3</b>
 
 <i>Available commands:</i>
 
@@ -37,8 +38,9 @@ pub const STARTEN: &str = r#"
 • /cd <code>folder</code> — <i>Change directory</i>
 • /ls — <i>List directory contents</i>
 • /download <code>filename</code> — <i>Download file (up to 20 MB)</i>
-• /cmd <code>&lt;args&gt;</code> — <i>Run bash command</i>
+• /cmd <code>&lt;command&gt;</code> — <i>Run bash command</i>
 • /screenshot — <i>Send screenshot</i>
+• /input - <i>Keyboard emulation</i>
 
 ────────────────────
 <i>System ready</i>
@@ -110,3 +112,30 @@ pub const DLNFRU: &str = r#"
 
 pub const DLNFEN: &str = r#"
 File not found"#;
+
+//Input
+pub const INMENURU: &str = r#"
+<b>Меню ввода</b>
+<i>Нажмите на кнопку клавиатуры для эмуляции указанной комбинации клавиш</i>
+"#;
+
+pub const INMENUEN: &str = r#"
+<b>Input menu</b>
+<i>Click to claviature for emulate hotkey</i>
+"#;
+
+pub const INERRRU: &str = r#"
+<b>Пожалуйста, установите Ydtool корректно!</b>
+Инструкция (будет)
+"#;
+
+pub const INERREN: &str = r#"
+<b>Please install Ydtool correctly!</b>
+Instructions (will be)
+"#;
+
+pub const INEXECRU: &str = r#"
+Эмуляция клавиш:"#;
+
+pub const INEXECEN: &str = r#"
+Emulate hotkey:"#;
