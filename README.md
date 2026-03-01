@@ -21,6 +21,7 @@ Control your PC remotely via Telegram. A lightweight, Rust-based assistant that 
 - **📂 File Management:** Browse, view, and download files or folders (max size: 20MB).
 - **🌐 Display Server Support:** Compatible with both **Wayland** and **X11**.
 - **🌍 Bilingual:** Interface available in **English** and **Russian**.
+- **⌨️ Input emulate:** Emulate keyboard input via **ydotool**.
 - **🦀 Written in Rust:** Fast, memory-safe, and reliable.
 
 ---
@@ -29,6 +30,7 @@ Control your PC remotely via Telegram. A lightweight, Rust-based assistant that 
 
 Before building, ensure you have the following installed:
 - [Rust & Cargo](https://rustup.rs/)
+- [Ydotool](https://github.com/ReimuNotMoe/ydotool)
 - A Telegram Bot Token (get it from [@BotFather](https://t.me/BotFather))
 - Your Telegram Chat ID (get it from [@userinfobot](https://t.me/userinfobot))
 
@@ -53,15 +55,8 @@ ID=123456789
 > 🔒 **Tip:** Add `.env` to your `.gitignore` file to prevent accidentally committing secrets to GitHub.
 
 ### 3. Build and Run
-Compile the project using Cargo:
-```bash
-cargo build --release
-```
-
-Run the assistant:
-```bash
-cargo run
-```
+1: Install cargo and ydotool
+2: Compile the project using build script: bash build.sh
 
 ---
 
