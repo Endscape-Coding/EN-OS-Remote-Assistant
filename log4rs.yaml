@@ -1,0 +1,57 @@
+refresh_rate: 30 seconds
+
+appenders:
+  stdout:
+    kind: console
+    encoder:
+      pattern: "{d(%Y-%m-%d %H:%M:%S)} {h({l})} - {m}{n}"
+
+  app_log:
+    kind: rolling_file
+    path: "/var/log/en-os/remote_assistant/bot.log"
+    append: true
+    encoder:
+      pattern: "{d(%Y-%m-%d %H:%M:%S)} {l} - {m}{n}"
+    policy:
+      kind: compound
+      trigger:
+        kind: size
+        limit: 10 mb
+      roller:
+        kind: fixed_window
+        pattern: "/var/log/en-os/remote_assistant/bot.{}.log"
+        count: 5
+        base: 1
+
+  error_log:
+    kind: rolling_file
+    path: "/var/log/en-os/remote_assistant/error.log"
+    append: true
+    encoder:
+      pattern: "{d(%Y-%m-%d %H:%M:%S)} {l} - {m}{n}"
+    policy:
+      kind: compound
+      trigger:
+        kind: size
+        limit: 10 mb
+      roller:
+        kind: fixed_window
+        pattern: "/var/log/en-os/remote_assistant/error.{}.log"
+        count: 3
+        base: 1
+    filters:
+      - kind: threshold
+        level: error
+
+root:
+  level: info
+  appenders:
+    - stdout
+    - app_log
+
+loggers:
+  errors:
+    level: error
+    appenders:
+      - error_log
+    additive: false

@@ -19,14 +19,14 @@ impl Default for Config {
 }
 
 pub fn config_read() -> Result<Config, String> {
-    let path = format!("{}/.config/enos_assistant/settings.json",var("HOME").unwrap());
-    let path2 = format!("{}/.config/enos_assistant/",var("HOME").unwrap());
+    let path = format!("{}/.config/en-os/remote_assistant/settings.json",var("HOME").unwrap_or("/tmp/".to_string()));
+    let path2 = format!("{}/.config/en-os/remote_assistant/",var("HOME").unwrap_or("/tmp/".to_string()));
     let path = Path::new(&path);
     let path2 = Path::new(&path2);
 
     match path.exists() {
         true => {
-            println!("Читаем конфиг");
+            log::info!("Config exists, read file");
             let file = File::open(path).map_err(|e| e.to_string())?;
             let reader = BufReader::new(file);
             let config: Config = serde_json::from_reader(reader)
@@ -35,7 +35,7 @@ pub fn config_read() -> Result<Config, String> {
         }
 
         false => {
-            println!("Ошибка чтения конфига, может он просто еще не создан?");
+            log::warn!("Read error, maybe config has not been created?");
             fs::create_dir_all(path2).map_err(|e| e.to_string())?;
 
             let default_config = Config::default();
@@ -53,10 +53,10 @@ pub fn config_read() -> Result<Config, String> {
 }
 
 pub fn config_write(config: Config) -> Result<Config, String> {
-    println!("Запись в конфиг..");
+    log::info!("Write to config...");
 
-    let path = format!("{}/.config/enos_assistant/settings.json",var("HOME").unwrap());
-    let path2 = format!("{}/.config/enos_assistant/",var("HOME").unwrap());
+    let path = format!("{}/.config/en-os/remote_assistant/settings.json",var("HOME").unwrap_or("/tmp/".to_string()));
+    let path2 = format!("{}/.config/en-os/remote_assistant/",var("HOME").unwrap_or("/tmp/".to_string()));
     let path = Path::new(&path);
     let path2 = Path::new(&path2);
 
@@ -75,4 +75,3 @@ pub fn config_write(config: Config) -> Result<Config, String> {
 fn system_lang() -> String {
     env::var("LANG").expect("Ошибка получения языка").to_string().chars().take(2).collect()
 }
-

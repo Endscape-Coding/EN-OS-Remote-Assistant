@@ -1,141 +1,157 @@
 pub const ONRU: &str = r#"
-<b>EN-OS Remote Assistant v0.2</b>
-Система готова к работе!
-/start или /help для справки.
+<b>EN-OS Remote Assistant v0.3</b>
+✅ Система готова к работе!
+Используйте /start или /help для получения справки.
 "#;
 
 pub const ONEN: &str = r#"
-<b>EN-OS Remote Assistant v0.2</b>
-Ready to work!
-/start or /help to help
+<b>EN-OS Remote Assistant v0.3</b>
+✅ System is ready!
+Use /start or /help to get assistance.
 "#;
 
 pub const STARTRU: &str = r#"
 <b>EN-OS Remote Assistant v0.3</b>
 
-<i>Доступные команды:</i>
+<i>📋 Доступные команды:</i>
 
-• /start | /help - <i>Вызвать справку</i>
-• /setlang - <i>Выбрать язык</i>
-• /cd <code>folder</code> - <i>Перейти в папку</i>
-• /ls — <i>Просмотреть содержимое папкик</i>
-• /download <code>имя файла</code> - <i>Загрузить файл (до 20 МБ)</i>
-• /cmd <code>&lt;команда&gt;</code> - <i>Запустить bash-команду</i>
-• /screenshot - <i>Отправить скриншот</i>
-• /input - <i>Эмуляция ввода</i>
+• /start | /help - <i>Показать эту справку</i>
+• /setlang - <i>Выбрать язык интерфейса</i>
+• /cd <code>папка</code> - <i>Перейти в директорию</i>
+• /ls - <i>Просмотреть содержимое папки</i>
+• /download <code>файл</code> - <i>Скачать файл (до 20 МБ)</i>
+• /cmd <code>&lt;команда&gt;</code> - <i>Выполнить bash-команду</i>
+• /cmd_output <code>&lt;команда&gt;</code> - <i>Выполнить команду с выводом (бот может не отвечать до завершения)</i>
+• /screenshot - <i>Сделать скриншот экрана</i>
+• /input - <i>Эмуляция ввода с клавиатуры</i>
 
 ────────────────────
-<i>Система готова к работе</i>
+<i>🟢 Система готова к работе</i>
 "#;
 
 pub const STARTEN: &str = r#"
 <b>EN-OS Remote Assistant v0.3</b>
 
-<i>Available commands:</i>
+<i>📋 Available commands:</i>
 
-• /start | /help — <i>Show help</i>
-• /setlang — <i>Select language</i>
-• /cd <code>folder</code> — <i>Change directory</i>
-• /ls — <i>List directory contents</i>
-• /download <code>filename</code> — <i>Download file (up to 20 MB)</i>
-• /cmd <code>&lt;command&gt;</code> — <i>Run bash command</i>
-• /screenshot — <i>Send screenshot</i>
-• /input - <i>Keyboard emulation</i>
+• /start | /help - <i>Show this help message</i>
+• /setlang - <i>Change interface language</i>
+• /cd <code>folder</code> - <i>Change current directory</i>
+• /ls - <i>List directory contents</i>
+• /download <code>filename</code> - <i>Download a file (up to 20 MB)</i>
+• /cmd <code>&lt;command&gt;</code> - <i>Execute a bash command</i>
+• /cmd_output <code>&lt;command&gt;</code> - <i>Run command with output (bot may not respond until completion)</i>
+• /screenshot - <i>Capture and send screenshot</i>
+• /input - <i>Simulate keyboard input</i>
 
 ────────────────────
-<i>System ready</i>
+<i>🟢 System is ready</i>
 "#;
 
-//Screenshot
+// ───────── Screenshot ─────────
 pub const SCREENRU: &str = r#"
-Ваш скриншот
+📸 Ваш скриншот:
 "#;
 
 pub const SCREENEN: &str = r#"
-Your screenshot
+📸 Your screenshot:
 "#;
 
 pub const SCREENRUERR: &str = r#"
-Ошибка в создании скриншота:
+❌ Не удалось сделать скриншот:
 "#;
 
 pub const SCREENENERR: &str = r#"
-Error to capture screenshot:
+❌ Failed to capture screenshot:
 "#;
 
-//cmd
+// ───────── CMD ─────────
 pub const CMDHELPRU: &str = r#"
-Введите команду после cmd! <pre>Пример: /cmd firefox</pre>
+⚠️ Укажите команду после /cmd!
+<pre>Пример: /cmd firefox</pre>
 "#;
 
 pub const CMDHELPEN: &str = r#"
-Enter the command after cmd! <pre>For example: /cmd firefox</pre>
+⚠️ Please specify a command after /cmd!
+<pre>Example: /cmd firefox</pre>
 "#;
 
+pub const CMDSPAWNRU: &str = r#"
+🚀 Запуск:"#;
+
+pub const CMDSPAWNEN: &str = r#"
+🚀 Executing:"#;
+
 pub const CMDNOOUTRU: &str = r#"
-Но вывода не последовало...
+💤 Команда выполнена, но вывода нет.
 "#;
 
 pub const CMDNOOUTEN: &str = r#"
-But there was no conclusion...
+💤 Command completed, but no output was produced.
 "#;
 
-//cd
+// ───────── CD ─────────
 pub const CDRU: &str = r#"
-Перешли в"#;
+📁 Переход в:"#;
 
 pub const CDEN: &str = r#"
-Change to"#;
+📁 Now in:"#;
 
 pub const CDERRU: &str = r#"
-Директория не найдена"#;
+❌ Директория не найдена
+"#;
 
 pub const CDEREN: &str = r#"
-Directory not found"#;
+❌ Directory not found
+"#;
 
-//ls
+// ───────── LS ─────────
 pub const LSRU: &str = r#"
-Содержимое директории"#;
+📂 Содержимое директории:"#;
 
 pub const LSEN: &str = r#"
-Directory"#;
+📂 Directory contents:"#;
 
-//Download
+// ───────── Download ─────────
 pub const DLMSRU: &str = r#"
-Размер файла должен быть меньше 20 мегабайт!"#;
+⚠️ Размер файла не должен превышать 20 МБ!
+"#;
 
 pub const DLMSEN: &str = r#"
-File size must have lost 20MB"#;
+⚠️ File size must not exceed 20 MB!
+"#;
 
 pub const DLNFRU: &str = r#"
-Файл не найден"#;
+❌ Файл не найден
+"#;
 
 pub const DLNFEN: &str = r#"
-File not found"#;
+❌ File not found
+"#;
 
-//Input
+// ───────── Input ─────────
 pub const INMENURU: &str = r#"
-<b>Меню ввода</b>
-<i>Нажмите на кнопку клавиатуры для эмуляции указанной комбинации клавиш</i>
+<b>⌨️ Меню ввода</b>
+<i>Нажмите на кнопку, чтобы эмулировать нажатие клавиши или комбинации</i>
 "#;
 
 pub const INMENUEN: &str = r#"
-<b>Input menu</b>
-<i>Click to claviature for emulate hotkey</i>
+<b>⌨️ Input Menu</b>
+<i>Tap a button to simulate a keypress or hotkey combination</i>
 "#;
 
 pub const INERRRU: &str = r#"
-<b>Пожалуйста, установите Ydtool корректно!</b>
-Инструкция (будет)
+<b>❌ Ydtool установлен некорректно!</b>
+<i>Инструкция по настройке скоро появится</i>
 "#;
 
 pub const INERREN: &str = r#"
-<b>Please install Ydtool correctly!</b>
-Instructions (will be)
+<b>❌ Ydtool is not configured correctly!</b>
+<i>Setup guide coming soon</i>
 "#;
 
 pub const INEXECRU: &str = r#"
-Эмуляция клавиш:"#;
+⌨️ Эмуляция:"#;
 
 pub const INEXECEN: &str = r#"
-Emulate hotkey:"#;
+⌨️ Simulating:"#;

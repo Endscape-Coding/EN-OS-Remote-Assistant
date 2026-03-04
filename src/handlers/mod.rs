@@ -1,7 +1,7 @@
 pub mod data;
 
 pub mod command;
-pub use command::{cmd};
+pub use command::{cmd, cmd_output};
 
 pub mod start;
 pub use start::start;
@@ -20,3 +20,6 @@ pub use files::{cd, ls, download};
 
 pub mod input;
 pub use input::{input};
+
+pub mod other;
+pub use other::check_prog;

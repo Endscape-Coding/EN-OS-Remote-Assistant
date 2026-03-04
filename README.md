@@ -31,6 +31,7 @@ Control your PC remotely via Telegram. A lightweight, Rust-based assistant that 
 Before building, ensure you have the following installed:
 - [Rust & Cargo](https://rustup.rs/)
 - [Ydotool](https://github.com/ReimuNotMoe/ydotool)
+- [Scrot](https://github.com/resurrecting-open-source-projects/scrot) (if you use x11)
 - A Telegram Bot Token (get it from [@BotFather](https://t.me/BotFather))
 - Your Telegram Chat ID (get it from [@userinfobot](https://t.me/userinfobot))
 
@@ -55,8 +56,11 @@ ID=123456789
 > 🔒 **Tip:** Add `.env` to your `.gitignore` file to prevent accidentally committing secrets to GitHub.
 
 ### 3. Build and Run
-1: Install cargo and ydotool
-2: Compile the project using build script: bash build.sh
+1: Install ```cargo``` and ```ydotool```  
+2: Compile the project using build script: 
+```
+bash build.sh
+```
 
 ---
 

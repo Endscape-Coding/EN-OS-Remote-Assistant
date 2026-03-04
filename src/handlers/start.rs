@@ -5,17 +5,23 @@ use crate::handlers::config_read;
 use teloxide::types::{KeyboardButton, KeyboardMarkup};
 
 pub async fn start(bot: Bot, msg: Message) -> io::Result<()> {
-    let message: String;
-    let config = config_read();
+    log::info!("Command: start <3");
 
-    if config.unwrap().lang == "ru" {
-        message = String::from(data::STARTRU);
-    } else {
-        message = String::from(data::STARTEN);
-    }
+    let config = match config_read() {
+        Ok(config) => config,
+        Err(e) => {
+            log::error!("Config read failed: {}", e);
+            let _ = bot.send_message(msg.chat.id, "Config error").await;
+            return Ok(());
+        }
+    };
+
+    let message = if config.lang == "ru" { data::STARTRU } else { data::STARTEN };
+
     let buttons = vec![
         vec![KeyboardButton::new("/start"), KeyboardButton::new("/screenshot")],
         vec![KeyboardButton::new("/ls"), KeyboardButton::new("/setlang")],
+        vec![KeyboardButton::new("/input"), KeyboardButton::new("/setlang")],
     ];
 
     let keyboard = KeyboardMarkup::new(buttons)

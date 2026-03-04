@@ -7,11 +7,16 @@ use crate::handlers::data;
 
 mod handlers;
 
+const VERSION: f64 = 0.31;
+
 #[derive(BotCommands, Clone)]
-#[command(rename_rule = "lowercase")]
+#[command(rename_rule = "snake_case")]
 enum Botcommand {
     #[command(description = "Run command")]
     Cmd(String),
+
+    #[command(description = "Run command with output")]
+    CmdOutput(String),
 
     #[command(description = "Change Directory")]
     Cd(String),
@@ -33,12 +38,14 @@ enum Botcommand {
     Setlang,
 }
 
+//Главный handler
 #[tokio::main]
 async fn main() {
     let message;
     dotenvy::dotenv().expect("Failed foad from .env file");
-    println!("EN-OS Remote Assistant");
-    pretty_env_logger::init();
+    println!("EN-OS Remote Assistant v{}", VERSION);
+    log4rs::init_file("log4rs.yaml", Default::default()).expect("Failed to initialize logging");
+
     log::info!("Starting bot...");
     let bot = Bot::from_env();
 
@@ -73,6 +80,7 @@ async fn main() {
             msg.chat.id == ChatId(id)
         })
         .branch(dptree::case![Botcommand::Cmd(args)].endpoint(handlers::cmd))
+        .branch(dptree::case![Botcommand::CmdOutput(args)].endpoint(handlers::cmd_output))
         .branch(dptree::case![Botcommand::Start].endpoint(handlers::start))
         .branch(dptree::case![Botcommand::Help].endpoint(handlers::start))
         .branch(dptree::case![Botcommand::Setlang].endpoint(handlers::setlang))
@@ -96,7 +104,7 @@ async fn main() {
 }
 
 async fn exec_ydt() -> bool {
-    if !check_ydt().await {
+    if !handlers::check_prog("ydotool").await {
         return false;
     }
 
@@ -113,16 +121,4 @@ async fn exec_ydt() -> bool {
     }
 }
 
-async fn check_ydt() -> bool {
-    let cmd = Command::new("which")
-    .arg("ydotool")
-    .output();
 
-    if cmd.expect("Error..?").status.success() {
-        log::info!("Ydotool has been installed!");
-        return true;
-    } else {
-        log::error!("Ydotool not installed!");
-        return false;
-    }
-}
