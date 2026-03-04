@@ -17,14 +17,24 @@ use crate::handlers::config_read;
 pub async fn cd(bot: Bot, msg: Message, command: Botcommand) -> io::Result<()> {
     match command {
         Botcommand::Cd(args) => {
+            log::info!("Command: Cd");
+
             log::info!("Read config");
-            let config = config_read();
+            let config = match config_read() {
+                Ok(config) => config,
+                Err(e) => {
+                    log::error!("Config read failed: {}", e);
+                    let _ = bot.send_message(msg.chat.id, "Config error").await;
+                    return Ok(());
+                }
+            };
+
             let new_path = Path::new(&args);
             let message: String;
 
             if env::set_current_dir(&new_path).is_ok() {
                 let current = env::current_dir().expect("Не удалось распознать текущую папку! / Couldn't recognize the current folder!");
-                if config.unwrap().lang == "ru" {
+                if config.lang == "ru" {
                     message = format!("{}: <code>{}</code>",data::CDRU,  current.display());
                 } else {
                     message = format!("{}: <code>{}</code>",data::CDEN,  current.display());
@@ -33,7 +43,7 @@ pub async fn cd(bot: Bot, msg: Message, command: Botcommand) -> io::Result<()> {
                 .parse_mode(teloxide::types::ParseMode::Html)
                 .await;
             } else {
-                if config.unwrap().lang == "ru" {
+                if config.lang == "ru" {
                     message = format!("{}: <code>{}</code>",data::CDERRU, args);
                 } else {
                     message = format!("{}: <code>{}</code>",data::CDEREN, args);
@@ -50,7 +60,8 @@ pub async fn cd(bot: Bot, msg: Message, command: Botcommand) -> io::Result<()> {
 }
 
 pub async fn ls(bot: Bot, msg: Message) -> io::Result<()> {
-    log::info!("Read config");
+    log::info!("Command: ls");
+
     let config = config_read();
     log::info!("Give a current_dir");
     let current = env::current_dir().expect("Не удалось распознать текущую папку! / Couldn't recognize the current folder!");
@@ -86,8 +97,17 @@ pub async fn ls(bot: Bot, msg: Message) -> io::Result<()> {
 pub async fn download(bot: Bot, msg: Message, command: Botcommand) -> io::Result<()> {
     match command {
         Botcommand::Download(args) => {
-            log::info!("Read config");
-            let config = config_read();
+            log::info!("Command: download");
+
+            let config = match config_read() {
+                Ok(config) => config,
+                Err(e) => {
+                    log::error!("Config read failed: {}", e);
+                    let _ = bot.send_message(msg.chat.id, "Config error").await;
+                    return Ok(());
+                }
+            };
+
             let path = Path::new(&args);
             let message: String;
 
@@ -117,11 +137,8 @@ pub async fn download(bot: Bot, msg: Message, command: Botcommand) -> io::Result
                             let sizemb = size / 1024 / 1024;
 
                             if sizemb > 20 {
-                                if config.unwrap().lang == "ru" {
-                                    message = String::from(data::DLMSRU);
-                                } else {
-                                    message = String::from(data::DLMSEN);
-                                }
+                                let message = if config.lang == "ru" { data::DLMSRU } else { data::DLMSEN };
+
                                 animation_task.abort();
                                 let _ = bot.delete_message(smsg.clone().unwrap().chat.id, smsg.unwrap().id).await;
                                 let _ = bot.send_message(msg.chat.id, message)
@@ -142,7 +159,10 @@ pub async fn download(bot: Bot, msg: Message, command: Botcommand) -> io::Result
 
                                 animation_task.abort();
                                 let _ = bot.delete_message(smsg.clone().unwrap().chat.id, smsg.unwrap().id).await;
-                                let _ = fs::remove_file(&zip_name);
+
+                                if let Err(e) = fs::remove_file(&zip_name) {
+                                    log::warn!("Failed to remove temp zip file {}: {}", zip_name, e);
+                                }
                             }
 
                         } else {
@@ -150,11 +170,7 @@ pub async fn download(bot: Bot, msg: Message, command: Botcommand) -> io::Result
                             let size = meta.len() / 1024 / 1024;
                             log::info!("File size: {}", size);
                             if size > 20 {
-                                if config.unwrap().lang == "ru" {
-                                    message = String::from(data::DLMSRU);
-                                } else {
-                                    message = String::from(data::DLMSEN);
-                                }
+                                let message = if config.lang == "ru" { data::DLMSRU } else { data::DLMSEN };
 
                                 let _ = bot.send_message(msg.chat.id, message)
                                 .await;
@@ -173,11 +189,8 @@ pub async fn download(bot: Bot, msg: Message, command: Botcommand) -> io::Result
                     Err(e) => eprintln!("Ошибка: {}", e),
                 }
             } else {
-                if config.unwrap().lang == "ru" {
-                    message = String::from(data::DLNFRU);
-                } else {
-                    message = String::from(data::DLNFEN);
-                }
+                let message = if config.lang == "ru" { data::DLNFRU } else { data::DLNFEN };
+
                 let _ = bot.send_message(msg.chat.id, message)
                 .parse_mode(teloxide::types::ParseMode::Html)
                 .await;

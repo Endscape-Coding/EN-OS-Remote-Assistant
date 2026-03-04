@@ -1,6 +1,6 @@
 [package]
 name = "en-os-remote-assistant"
-version = "0.1.0"
+version = "0.3.1"
 edition = "2024"
 
 [dependencies]
@@ -18,3 +18,5 @@ zip = "8.1.0"
 walkdir = "2.5.0"
 chrono = "0.4.44"
 enigo = "0.6.1"
+anyhow = "1.0.102"
+log4rs = "1.4.0"
