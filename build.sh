@@ -102,6 +102,10 @@ else
     success "User already in 'input' group"
 fi
 
+sudo mkdir -p /var/log/en-os/remote_assistant
+sudo chown $USER:$USER /var/log/en-os/remote_assistant
+sudo chmod 755 /var/log/en-os/remote_assistant
+
 echo "Starting compilation..."
 if cargo build --release; then
     success "Compilation successful!"
