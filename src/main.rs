@@ -21,11 +21,19 @@ enum Botcommand {
     #[command(description = "Change Directory")]
     Cd(String),
 
+    #[command(description = "CRemove file/dir")]
+    Rm(String),
+
     #[command(description = "Download file")]
     Download(String),
 
-    #[command(description = "Download file")]
+    #[command(description = "Emulate input")]
     Input(String),
+
+    #[command(description = "Open link")]
+    Openlink(String),
+
+    Filemanager,
 
     Ls,
 
@@ -33,9 +41,20 @@ enum Botcommand {
 
     Help,
 
+    Powerman,
+
+    Shutdown,
+
+    Reboot,
+
+    Sleep,
+
+    Hibernate,
+
     Screenshot,
 
     Setlang,
+
 }
 
 //Главный handler
@@ -56,7 +75,7 @@ async fn main() {
     let ydt: bool = exec_ydt().await;
 
     if !ydt {
-        log::warn!("Ydotool not installed..");
+        log::warn!("Ydotool not installed!");
         let _ = bot.send_message(ChatId(id), "Ydotool not install or installed incorrectly! Input may not work!")
         .parse_mode(teloxide::types::ParseMode::Html)
         .await;
@@ -85,10 +104,18 @@ async fn main() {
         .branch(dptree::case![Botcommand::Help].endpoint(handlers::start))
         .branch(dptree::case![Botcommand::Setlang].endpoint(handlers::setlang))
         .branch(dptree::case![Botcommand::Screenshot].endpoint(handlers::screen))
+        .branch(dptree::case![Botcommand::Filemanager].endpoint(handlers::filemanager))
         .branch(dptree::case![Botcommand::Cd(args)].endpoint(handlers::cd))
+        .branch(dptree::case![Botcommand::Rm(args)].endpoint(handlers::rm))
         .branch(dptree::case![Botcommand::Download(args)].endpoint(handlers::download))
         .branch(dptree::case![Botcommand::Ls].endpoint(handlers::ls))
         .branch(dptree::case![Botcommand::Input(args)].endpoint(move |bot: Bot, msg: Message, args: String| {handlers::input(bot, msg, Botcommand::Input(args), ydt)}))
+        .branch(dptree::case![Botcommand::Powerman].endpoint(move |bot: Bot, msg: Message| {handlers::powerman(bot, msg, 0)}))
+        .branch(dptree::case![Botcommand::Shutdown].endpoint(move |bot: Bot, msg: Message| {handlers::powerman(bot, msg, 1)}))
+        .branch(dptree::case![Botcommand::Reboot].endpoint(move |bot: Bot, msg: Message| {handlers::powerman(bot, msg, 2)}))
+        .branch(dptree::case![Botcommand::Sleep].endpoint(move |bot: Bot, msg: Message| {handlers::powerman(bot, msg, 3)}))
+        .branch(dptree::case![Botcommand::Hibernate].endpoint(move |bot: Bot, msg: Message| {handlers::powerman(bot, msg, 4)}))
+        .branch(dptree::case![Botcommand::Openlink(args)].endpoint(handlers::openlink))
     )
     .branch(
         Update::filter_callback_query()

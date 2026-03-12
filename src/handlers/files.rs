@@ -13,6 +13,39 @@ use zip::write::SimpleFileOptions;
 use crate::Botcommand;
 use crate::handlers::data;
 use crate::handlers::config_read;
+use teloxide::types::{KeyboardButton, KeyboardMarkup};
+
+pub async fn filemanager(bot: Bot, msg: Message) -> io::Result<()> {
+    log::info!("Command: filemanager");
+
+    let config = match config_read() {
+        Ok(config) => config,
+        Err(e) => {
+            log::error!("Config read failed: {}", e);
+            let _ = bot.send_message(msg.chat.id, "Config error").await;
+            return Ok(());
+        }
+    };
+
+    let message = if config.lang == "ru" { data::FILEMANRU } else { data::FILEMANEN };
+
+    let buttons = vec![
+        vec![KeyboardButton::new("/start")],
+        vec![KeyboardButton::new("/ls"), KeyboardButton::new("/cd")],
+        vec![KeyboardButton::new("/download"), KeyboardButton::new("/rm")],
+    ];
+
+    let keyboard = KeyboardMarkup::new(buttons)
+    .resize_keyboard();
+
+    let _ = bot.send_message(msg.chat.id, message)
+    .parse_mode(teloxide::types::ParseMode::Html)
+    .reply_markup(keyboard)
+    .await;
+
+    Ok(())
+}
+
 
 pub async fn cd(bot: Bot, msg: Message, command: Botcommand) -> io::Result<()> {
     match command {
@@ -28,6 +61,15 @@ pub async fn cd(bot: Bot, msg: Message, command: Botcommand) -> io::Result<()> {
                     return Ok(());
                 }
             };
+
+            if args.trim().is_empty() {
+                let message = if config.lang == "ru" { data::CDNOARGSRU } else { data::CDNOARGSEN };
+                log::info!("No args");
+                let _ = bot.send_message(msg.chat.id, message)
+                    .parse_mode(teloxide::types::ParseMode::Html)
+                    .await;
+                return Ok(());
+            }
 
             let new_path = Path::new(&args);
             let message: String;
@@ -59,12 +101,74 @@ pub async fn cd(bot: Bot, msg: Message, command: Botcommand) -> io::Result<()> {
     }
 }
 
+pub async fn rm(bot: Bot, msg: Message, command: Botcommand) -> io::Result<()> {
+    match command {
+        Botcommand::Rm(args) => {
+            log::info!("Command: Rm");
+
+            log::info!("Read config");
+            let config = match config_read() {
+                Ok(config) => config,
+                Err(e) => {
+                    log::error!("Config read failed: {}", e);
+                    let _ = bot.send_message(msg.chat.id, "Config error").await;
+                    return Ok(());
+                }
+            };
+
+            if args.trim().is_empty() {
+                let message = if config.lang == "ru" { data::RMNOARGSRU } else { data::RMNOARGSEN };
+                log::info!("No args");
+                let _ = bot.send_message(msg.chat.id, message)
+                    .parse_mode(teloxide::types::ParseMode::Html)
+                    .await;
+                return Ok(());
+            }
+
+            let new_path = Path::new(&args);
+
+            if new_path.exists(){
+                let message = if config.lang == "ru" { data::RMRU } else { data::RMEN };
+                let _ = bot.send_message(msg.chat.id, message).await;
+                if new_path.is_dir(){
+                    log::info!("Remove dir");
+                    match fs::remove_dir_all(new_path) {
+                        Ok(..) => {
+                            log::info!("Remove dir succesfully!");
+                            let message = if config.lang == "ru" { data::RMSUCRU } else { data::RMSUCEN };
+                            let _ = bot.send_message(msg.chat.id, message).await;
+                        },
+                        Err(e) => {
+                            log::error!("Error remove dir!, {}", e);
+                            let _ = bot.send_message(msg.chat.id, format!("Cannot remove, error: {}", e)).await.ok();
+                        }
+                    }
+                }else {
+                    match fs::remove_file(new_path) {
+                        Ok(..) => {
+                            log::info!("File removed succesfully!");
+                            let message = if config.lang == "ru" { data::RMSUCRU } else { data::RMSUCEN };
+                            let _ = bot.send_message(msg.chat.id, message).await;
+                        },
+                        Err(e) => {
+                            log::error!("Error remove file!, {}", e);
+                            bot.send_message(msg.chat.id, format!("Cannot remove, error: {}", e)).await.ok();
+                        }
+                    }
+                }
+            }
+            Ok(())
+        }
+            _ => Ok(())
+    }
+}
+
+
 pub async fn ls(bot: Bot, msg: Message) -> io::Result<()> {
     log::info!("Command: ls");
-
     let config = config_read();
     log::info!("Give a current_dir");
-    let current = env::current_dir().expect("Не удалось распознать текущую папку! / Couldn't recognize the current folder!");
+    let current = env::current_dir()?;
     let mut message: String;
 
     if config.unwrap().lang == "ru" {
@@ -74,7 +178,7 @@ pub async fn ls(bot: Bot, msg: Message) -> io::Result<()> {
     }
 
     log::info!("Read dir");
-    let paths = fs::read_dir("./").expect("Не удалось прочитать директорию! / Couldn't read the directory");
+    let paths = fs::read_dir("./")?;
 
     let names: String = paths
     .filter_map(|entry| entry.ok())
