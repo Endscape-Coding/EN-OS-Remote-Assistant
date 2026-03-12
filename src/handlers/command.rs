@@ -88,7 +88,7 @@ pub async fn cmd_output(bot: Bot, msg: Message, command: Botcommand) -> io::Resu
             let _ = bot.send_message(msg.chat.id, message).await;
             Ok(())
         }
-        _ => Ok(())
+         _=> Ok(())
     }
 
 }

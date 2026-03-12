@@ -33,162 +33,166 @@ pub async fn input(bot: Bot, msg: Message, command: Botcommand, ydt: bool) -> io
             if args.trim().is_empty() {
                 let message = if config.lang == "ru" { data::INMENURU } else { data::INMENUEN };
                 let buttons = vec![
-                    vec![
-                        KeyboardButton::new("/start"),
-                        KeyboardButton::new("/input escape"),
-                        KeyboardButton::new("/input enter"),
-                        KeyboardButton::new("/input backspace"),
-                    ],
-                    vec![
-                        KeyboardButton::new("/input tab"),
-                        KeyboardButton::new("/input space"),
-                        KeyboardButton::new("/input delete"),
-                        KeyboardButton::new("/input insert"),
-                    ],
-                    vec![
-                        KeyboardButton::new("/input home"),
-                        KeyboardButton::new("/input end"),
-                        KeyboardButton::new("/input pageup"),
-                        KeyboardButton::new("/input pagedown"),
-                    ],
-
-                    vec![
-                        KeyboardButton::new("/input volup"),
-                        KeyboardButton::new("/input voldown"),
-                        KeyboardButton::new("/input mute"),
-                        KeyboardButton::new("/input play/pause"),
-                    ],
-
-                    vec![
-                        KeyboardButton::new("/input up"),
-                        KeyboardButton::new("/input down"),
-                        KeyboardButton::new("/input left"),
-                        KeyboardButton::new("/input right"),
-                    ],
-
-                    vec![
-                        KeyboardButton::new("/input ctrl+c"),
-                        KeyboardButton::new("/input ctrl+v"),
-                        KeyboardButton::new("/input ctrl+x"),
-                        KeyboardButton::new("/input ctrl+a"),
-                    ],
-                    vec![
-                        KeyboardButton::new("/input ctrl+z"),
-                        KeyboardButton::new("/input ctrl+s"),
-                        KeyboardButton::new("/input ctrl+f"),
-                        KeyboardButton::new("/input ctrl+r"),
-                    ],
-                    vec![
-                        KeyboardButton::new("/input ctrl+t"),
-                        KeyboardButton::new("/input ctrl+w"),
-                        KeyboardButton::new("/input ctrl+n"),
-                        KeyboardButton::new("/input ctrl+enter"),
-                    ],
-
-                    vec![
-                        KeyboardButton::new("/input alt+tab"),
-                        KeyboardButton::new("/input alt+f4"),
-                        KeyboardButton::new("/input alt+enter"),
-                        KeyboardButton::new("/input alt+space"),
-                    ],
-                    vec![
-                        KeyboardButton::new("/input super"),
-                        KeyboardButton::new("/input super+l"),
-                        KeyboardButton::new("/input super+d"),
-                        KeyboardButton::new("/input super+e"),
-                    ],
-                    vec![
-                        KeyboardButton::new("/input super+r"),
-                        KeyboardButton::new("/input super+t"),
-                        KeyboardButton::new("/input super+a"),
-                    ],
-
-                    vec![
-                        KeyboardButton::new("/input ctrl+alt+t"),
-                        KeyboardButton::new("/input ctrl+alt+delete"),
-                        KeyboardButton::new("/input ctrl+shift+esc"),
-                    ],
-                    vec![
-                        KeyboardButton::new("/input shift+ctrl+p"),
-                        KeyboardButton::new("/input ctrl+shift+c"),
-                        KeyboardButton::new("/input ctrl+shift+v"),
-                    ],
-
-                    vec![
-                        KeyboardButton::new("/input q"), KeyboardButton::new("/input w"),
-                        KeyboardButton::new("/input e"), KeyboardButton::new("/input r"),
-                        KeyboardButton::new("/input t"), KeyboardButton::new("/input y"),
-                    ],
-                    vec![
-                        KeyboardButton::new("/input u"), KeyboardButton::new("/input i"),
-                        KeyboardButton::new("/input o"), KeyboardButton::new("/input p"),
-                    ],
-                    vec![
-                        KeyboardButton::new("/input a"), KeyboardButton::new("/input s"),
-                        KeyboardButton::new("/input d"), KeyboardButton::new("/input f"),
-                        KeyboardButton::new("/input g"), KeyboardButton::new("/input h"),
-                    ],
-                    vec![
-                        KeyboardButton::new("/input j"), KeyboardButton::new("/input k"),
-                        KeyboardButton::new("/input l"),
-                    ],
-                    vec![
-                        KeyboardButton::new("/input z"), KeyboardButton::new("/input x"),
-                        KeyboardButton::new("/input c"), KeyboardButton::new("/input v"),
-                        KeyboardButton::new("/input b"), KeyboardButton::new("/input n"),
-                        KeyboardButton::new("/input m"),
-                    ],
-
-                    vec![
-                        KeyboardButton::new("/input й"), KeyboardButton::new("/input ц"),
-                        KeyboardButton::new("/input у"), KeyboardButton::new("/input к"),
-                        KeyboardButton::new("/input е"), KeyboardButton::new("/input н"),
-                    ],
-                    vec![
-                        KeyboardButton::new("/input г"), KeyboardButton::new("/input ш"),
-                        KeyboardButton::new("/input щ"), KeyboardButton::new("/input з"),
-                        KeyboardButton::new("/input х"), KeyboardButton::new("/input ъ"),
-                    ],
-                    vec![
-                        KeyboardButton::new("/input ф"), KeyboardButton::new("/input ы"),
-                        KeyboardButton::new("/input в"), KeyboardButton::new("/input а"),
-                        KeyboardButton::new("/input п"), KeyboardButton::new("/input р"),
-                    ],
-                    vec![
-                        KeyboardButton::new("/input о"), KeyboardButton::new("/input л"),
-                        KeyboardButton::new("/input д"), KeyboardButton::new("/input ж"),
-                        KeyboardButton::new("/input э"),
-                    ],
-                    vec![
-                        KeyboardButton::new("/input я"), KeyboardButton::new("/input ч"),
-                        KeyboardButton::new("/input с"), KeyboardButton::new("/input м"),
-                        KeyboardButton::new("/input и"), KeyboardButton::new("/input т"),
-                        KeyboardButton::new("/input ь"), KeyboardButton::new("/input ю"),
-                        KeyboardButton::new("/input ё"),
-                    ],
-
-                    vec![
-                        KeyboardButton::new("/input 1"), KeyboardButton::new("/input 2"),
-                        KeyboardButton::new("/input 3"), KeyboardButton::new("/input 4"),
-                        KeyboardButton::new("/input 5"),
-                    ],
-                    vec![
-                        KeyboardButton::new("/input 6"), KeyboardButton::new("/input 7"),
-                        KeyboardButton::new("/input 8"), KeyboardButton::new("/input 9"),
-                        KeyboardButton::new("/input 0"),
-                    ],
-                    vec![
-                        KeyboardButton::new("/input -"), KeyboardButton::new("/input ="),
-                        KeyboardButton::new("/input ["), KeyboardButton::new("/input ]"),
-                    ],
-                    vec![
-                        KeyboardButton::new("/input ;"), KeyboardButton::new("/input '"),
-                        KeyboardButton::new("/input ,"), KeyboardButton::new("/input ."),
-                        KeyboardButton::new("/input /"),
-                    ],
-                    vec![
-                        KeyboardButton::new("/input \\"), KeyboardButton::new("/input `"),
-                    ],
+                vec![
+                    KeyboardButton::new("/input up"),
+                    KeyboardButton::new("/input down"),
+                    KeyboardButton::new("/input left"),
+                    KeyboardButton::new("/input right"),
+                ],
+                vec![
+                    KeyboardButton::new("/input enter"),
+                    KeyboardButton::new("/input backspace"),
+                    KeyboardButton::new("/input escape"),
+                    KeyboardButton::new("/input tab"),
+                ],
+                vec![
+                    KeyboardButton::new("/input home"),
+                    KeyboardButton::new("/input end"),
+                    KeyboardButton::new("/input pageup"),
+                    KeyboardButton::new("/input pagedown"),
+                ],
+                vec![
+                    KeyboardButton::new("/input delete"),
+                    KeyboardButton::new("/input insert"),
+                    KeyboardButton::new("/input space"),
+                ],
+                vec![
+                    KeyboardButton::new("/input volup"),
+                    KeyboardButton::new("/input voldown"),
+                    KeyboardButton::new("/input mute"),
+                    KeyboardButton::new("/input play/pause"),
+                ],
+                vec![
+                    KeyboardButton::new("/input ctrl+c"),
+                    KeyboardButton::new("/input ctrl+v"),
+                    KeyboardButton::new("/input ctrl+x"),
+                    KeyboardButton::new("/input ctrl+z"),
+                ],
+                vec![
+                    KeyboardButton::new("/input ctrl+a"),
+                    KeyboardButton::new("/input ctrl+f"),
+                    KeyboardButton::new("/input ctrl+t"),
+                    KeyboardButton::new("/input ctrl+w"),
+                ],
+                vec![
+                    KeyboardButton::new("/input ctrl+s"),
+                    KeyboardButton::new("/input ctrl+r"),
+                    KeyboardButton::new("/input ctrl+n"),
+                    KeyboardButton::new("/input ctrl+enter"),
+                ],
+                vec![
+                    KeyboardButton::new("/input alt+tab"),
+                    KeyboardButton::new("/input alt+f4"),
+                    KeyboardButton::new("/input alt+enter"),
+                ],
+                vec![
+                    KeyboardButton::new("/input super"),
+                    KeyboardButton::new("/input super+l"),
+                    KeyboardButton::new("/input super+d"),
+                    KeyboardButton::new("/input super+e"),
+                ],
+                vec![
+                    KeyboardButton::new("/input super+r"),
+                    KeyboardButton::new("/input super+t"),
+                    KeyboardButton::new("/input super+a"),
+                ],
+                vec![
+                    KeyboardButton::new("/input ctrl+alt+t"),
+                    KeyboardButton::new("/input ctrl+alt+delete"),
+                    KeyboardButton::new("/input ctrl+shift+esc"),
+                ],
+                vec![
+                    KeyboardButton::new("/input ctrl+shift+c"),
+                    KeyboardButton::new("/input ctrl+shift+v"),
+                    KeyboardButton::new("/input shift+ctrl+p"),
+                ],
+                vec![
+                    KeyboardButton::new("/input q"), KeyboardButton::new("/input w"),
+                    KeyboardButton::new("/input e"), KeyboardButton::new("/input r"),
+                ],
+                vec![
+                    KeyboardButton::new("/input t"), KeyboardButton::new("/input y"),
+                    KeyboardButton::new("/input u"), KeyboardButton::new("/input i"),
+                ],
+                vec![
+                    KeyboardButton::new("/input o"), KeyboardButton::new("/input p"),
+                ],
+                vec![
+                    KeyboardButton::new("/input a"), KeyboardButton::new("/input s"),
+                    KeyboardButton::new("/input d"), KeyboardButton::new("/input f"),
+                ],
+                vec![
+                    KeyboardButton::new("/input g"), KeyboardButton::new("/input h"),
+                    KeyboardButton::new("/input j"), KeyboardButton::new("/input k"),
+                ],
+                vec![
+                    KeyboardButton::new("/input l"),
+                ],
+                vec![
+                    KeyboardButton::new("/input z"), KeyboardButton::new("/input x"),
+                    KeyboardButton::new("/input c"), KeyboardButton::new("/input v"),
+                ],
+                vec![
+                    KeyboardButton::new("/input b"), KeyboardButton::new("/input n"),
+                    KeyboardButton::new("/input m"),
+                ],
+                vec![
+                    KeyboardButton::new("/input й"), KeyboardButton::new("/input ц"),
+                    KeyboardButton::new("/input у"), KeyboardButton::new("/input к"),
+                ],
+                vec![
+                    KeyboardButton::new("/input е"), KeyboardButton::new("/input н"),
+                    KeyboardButton::new("/input г"), KeyboardButton::new("/input ш"),
+                ],
+                vec![
+                    KeyboardButton::new("/input щ"), KeyboardButton::new("/input з"),
+                    KeyboardButton::new("/input х"), KeyboardButton::new("/input ъ"),
+                ],
+                vec![
+                    KeyboardButton::new("/input ф"), KeyboardButton::new("/input ы"),
+                    KeyboardButton::new("/input в"), KeyboardButton::new("/input а"),
+                ],
+                vec![
+                    KeyboardButton::new("/input п"), KeyboardButton::new("/input р"),
+                    KeyboardButton::new("/input о"), KeyboardButton::new("/input л"),
+                ],
+                vec![
+                    KeyboardButton::new("/input д"), KeyboardButton::new("/input ж"),
+                    KeyboardButton::new("/input э"),
+                ],
+                vec![
+                    KeyboardButton::new("/input я"), KeyboardButton::new("/input ч"),
+                    KeyboardButton::new("/input с"), KeyboardButton::new("/input м"),
+                ],
+                vec![
+                    KeyboardButton::new("/input и"), KeyboardButton::new("/input т"),
+                    KeyboardButton::new("/input ь"), KeyboardButton::new("/input ю"),
+                ],
+                vec![
+                    KeyboardButton::new("/input ё"),
+                ],
+                vec![
+                    KeyboardButton::new("/input 1"), KeyboardButton::new("/input 2"),
+                    KeyboardButton::new("/input 3"), KeyboardButton::new("/input 4"),
+                    KeyboardButton::new("/input 5"),
+                ],
+                vec![
+                    KeyboardButton::new("/input 6"), KeyboardButton::new("/input 7"),
+                    KeyboardButton::new("/input 8"), KeyboardButton::new("/input 9"),
+                    KeyboardButton::new("/input 0"),
+                ],
+                vec![
+                    KeyboardButton::new("/input -"), KeyboardButton::new("/input ="),
+                    KeyboardButton::new("/input ["), KeyboardButton::new("/input ]"),
+                ],
+                vec![
+                    KeyboardButton::new("/input ;"), KeyboardButton::new("/input '"),
+                    KeyboardButton::new("/input ,"), KeyboardButton::new("/input ."),
+                    KeyboardButton::new("/input /"),
+                ],
+                vec![
+                    KeyboardButton::new("/input \\"), KeyboardButton::new("/input `"),
+                ],
                 ];
 
                 let keyboard = KeyboardMarkup::new(buttons)

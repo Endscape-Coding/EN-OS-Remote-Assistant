@@ -20,7 +20,7 @@ pub async fn start(bot: Bot, msg: Message) -> io::Result<()> {
 
     let buttons = vec![
         vec![KeyboardButton::new("/start"), KeyboardButton::new("/screenshot")],
-        vec![KeyboardButton::new("/ls"), KeyboardButton::new("/setlang")],
+        vec![KeyboardButton::new("/filemanager"), KeyboardButton::new("/powerman")],
         vec![KeyboardButton::new("/input"), KeyboardButton::new("/setlang")],
     ];
 
