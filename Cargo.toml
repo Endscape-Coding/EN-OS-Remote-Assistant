@@ -1,17 +1,18 @@
 [package]
 name = "en-os-remote-assistant"
-version = "0.3.1"
+version = "0.4.0"
 edition = "2024"
 
 [dependencies]
-teloxide = { version = "0.17", features = ["macros"] }
+teloxide = { version = "0.17", features = ["macros", "rustls"] }
 tokio = { version = "1.8", features = ["rt-multi-thread", "macros"] }
+ashpd = { version = "0.13", features = ["screenshot", "tokio"] }
+serde = { version = "1", features = ["derive"] }
+reqwest = { version = "0.13.2", default-features = false, features = ["rustls", "json"] }
 log = "0.4"
 dotenvy = "0.15"
 pretty_env_logger = "0.4"
-serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-ashpd = { version = "0.13", features = ["screenshot", "tokio"] }
 url = "2.5.8"
 thiserror = "2.0.18"
 zip = "8.1.0"
@@ -20,3 +21,5 @@ chrono = "0.4.44"
 enigo = "0.6.1"
 anyhow = "1.0.102"
 log4rs = "1.4.0"
+rust-embed = { version = "8.11.0", features = ["include-exclude"] }
+openssl = { version = "0.10", features = ["vendored"] }

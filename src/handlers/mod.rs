@@ -3,7 +3,7 @@ pub mod data;
 
 //Работа с коммандами (файл command.rs)
 pub mod command;
-pub use command::{cmd, cmd_output};
+pub use command::{cmd, cmd_output, command};
 
 //Стартовая команда (файл start.rs)
 pub mod start;
@@ -23,11 +23,11 @@ pub use lang::{setlang, setlang_callback};
 
 //Работы с файлами (Файл files.rs)
 pub mod files;
-pub use files::{filemanager, cd, rm, ls, download};
+pub use files::{cd, download, filemanager, ls, rm, upload};
 
 //Работа с эмуляцией ввода (Файл input.rs)
 pub mod input;
-pub use input::{input};
+pub use input::input;
 
 //Работа с питанием (Файл power.rs)
 pub mod power;
@@ -39,4 +39,3 @@ pub use link::openlink;
 //Другое...
 pub mod other;
 pub use other::check_prog;
-

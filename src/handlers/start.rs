@@ -1,9 +1,10 @@
 use std::io;
 use teloxide::prelude::*;
+use teloxide::types::{KeyboardButton, KeyboardMarkup};
 use crate::handlers::data;
 use crate::handlers::config_read;
-use teloxide::types::{KeyboardButton, KeyboardMarkup};
 
+//Start - Самая база, справка
 pub async fn start(bot: Bot, msg: Message) -> io::Result<()> {
     log::info!("Command: start <3");
 
@@ -16,22 +17,34 @@ pub async fn start(bot: Bot, msg: Message) -> io::Result<()> {
         }
     };
 
-    let message = if config.lang == "ru" { data::STARTRU } else { data::STARTEN };
+    let message = if config.lang == "ru" {
+        data::STARTRU
+    } else {
+        data::STARTEN
+    };
 
     let buttons = vec![
-        vec![KeyboardButton::new("/start"), KeyboardButton::new("/screenshot")],
-        vec![KeyboardButton::new("/filemanager"), KeyboardButton::new("/powerman")],
-        vec![KeyboardButton::new("/input"), KeyboardButton::new("/setlang")],
+        vec![
+            KeyboardButton::new("/start"),
+            KeyboardButton::new("/screenshot"),
+        ],
+        vec![
+            KeyboardButton::new("/filemanager"),
+            KeyboardButton::new("/powerman"),
+        ],
+        vec![
+            KeyboardButton::new("/input"),
+            KeyboardButton::new("/setlang"),
+        ],
     ];
 
-    let keyboard = KeyboardMarkup::new(buttons)
-    .resize_keyboard();
+    let keyboard = KeyboardMarkup::new(buttons).resize_keyboard();
 
-    let _ = bot.send_message(msg.chat.id, message)
-    .parse_mode(teloxide::types::ParseMode::Html)
-    .reply_markup(keyboard)
-    .await;
+    let _ = bot
+        .send_message(msg.chat.id, message)
+        .parse_mode(teloxide::types::ParseMode::Html)
+        .reply_markup(keyboard)
+        .await;
 
     Ok(())
 }
-
