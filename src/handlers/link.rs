@@ -1,10 +1,11 @@
 use std::io;
-use tokio::process::Command;
 use teloxide::prelude::*;
+use tokio::process::Command;
 use crate::handlers::config_read;
 use crate::{Botcommand, handlers::data};
 
-pub async fn openlink(bot: Bot, msg: Message, command: Botcommand) -> io::Result<()>{
+//Тут все легко: просто открывает ссылку.
+pub async fn openlink(bot: Bot, msg: Message, command: Botcommand) -> io::Result<()> {
     match command {
         Botcommand::Openlink(args) => {
             log::info!("Command: openlink");
@@ -18,14 +19,23 @@ pub async fn openlink(bot: Bot, msg: Message, command: Botcommand) -> io::Result
             };
 
             if args.trim().is_empty() {
-                let message = if config.lang == "ru" { data::LINKHELPRU } else { data::LINKHELPEN };
+                let message = if config.lang == "ru" {
+                    data::LINKHELPRU
+                } else {
+                    data::LINKHELPEN
+                };
                 log::info!("No args");
-                let _ = bot.send_message(msg.chat.id, message)
+                let _ = bot
+                    .send_message(msg.chat.id, message)
                     .parse_mode(teloxide::types::ParseMode::Html)
                     .await;
                 return Ok(());
             } else {
-                let message = if config.lang == "ru" { data::OPENLINKRU } else { data::OPENLINKEN };
+                let message = if config.lang == "ru" {
+                    data::OPENLINKRU
+                } else {
+                    data::OPENLINKEN
+                };
                 let _ = bot.send_message(msg.chat.id, message).await;
             }
 
@@ -34,10 +44,10 @@ pub async fn openlink(bot: Bot, msg: Message, command: Botcommand) -> io::Result
 
             match cmd.spawn() {
                 Ok(..) => log::info!("Open link: {}", &args),
-                Err(e) => log::info!("Ошибка {e}")
+                Err(e) => log::info!("Ошибка {e}"),
             }
             Ok(())
         }
-         _=> Ok(())
-    }    
+        _ => Ok(()),
+    }
 }

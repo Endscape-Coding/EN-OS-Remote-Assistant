@@ -3,24 +3,35 @@ use std::env::var;
 use std::fs::{self, File};
 use std::io::{BufReader, BufWriter, Write};
 use std::path::Path;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
     pub lang: String,
+    #[serde(default = "default_timeout")]
+    pub cmd_timeout: u64,
 }
 
 impl Default for Config {
     fn default() -> Self {
         Self {
-            lang: system_lang()
+            lang: system_lang(),
+            cmd_timeout: 60,
         }
     }
 }
 
+//В конфиге все не так сложно.
+//Чтение конфига
 pub fn config_read() -> Result<Config, String> {
-    let path = format!("{}/.config/en-os/remote_assistant/settings.json",var("HOME").unwrap_or("/tmp/".to_string()));
-    let path2 = format!("{}/.config/en-os/remote_assistant/",var("HOME").unwrap_or("/tmp/".to_string()));
+    let path = format!(
+        "{}/.config/en-os/remote_assistant/settings.json",
+        var("HOME").unwrap_or("/tmp/".to_string())
+    );
+    let path2 = format!(
+        "{}/.config/en-os/remote_assistant/",
+        var("HOME").unwrap_or("/tmp/".to_string())
+    );
     let path = Path::new(&path);
     let path2 = Path::new(&path2);
 
@@ -30,7 +41,7 @@ pub fn config_read() -> Result<Config, String> {
             let file = File::open(path).map_err(|e| e.to_string())?;
             let reader = BufReader::new(file);
             let config: Config = serde_json::from_reader(reader)
-            .map_err(|e| format!("Error parsing config: {}", e))?;
+                .map_err(|e| format!("Error parsing config: {}", e))?;
             Ok(config)
         }
 
@@ -42,36 +53,66 @@ pub fn config_read() -> Result<Config, String> {
             let file = fs::File::create(path).map_err(|e| e.to_string())?;
             let mut writer = BufWriter::new(file);
 
-            serde_json::to_writer_pretty(&mut writer, &default_config).map_err(|e| e.to_string())?;
+            serde_json::to_writer_pretty(&mut writer, &default_config)
+                .map_err(|e| e.to_string())?;
             writer.flush().map_err(|e| e.to_string())?;
 
             Ok(default_config)
         }
-
-
     }
 }
 
+//Запись в конфиг
 pub fn config_write(config: Config) -> Result<Config, String> {
     log::info!("Write to config...");
 
-    let path = format!("{}/.config/en-os/remote_assistant/settings.json",var("HOME").unwrap_or("/tmp/".to_string()));
-    let path2 = format!("{}/.config/en-os/remote_assistant/",var("HOME").unwrap_or("/tmp/".to_string()));
+    let path = format!(
+        "{}/.config/en-os/remote_assistant/settings.json",
+        var("HOME").unwrap_or("/tmp/".to_string())
+    );
+    let path2 = format!(
+        "{}/.config/en-os/remote_assistant/",
+        var("HOME").unwrap_or("/tmp/".to_string())
+    );
     let path = Path::new(&path);
     let path2 = Path::new(&path2);
 
-    fs::create_dir_all(path2).map_err(|e| format!("Ошибка создания директории для конфига: {}", e))?;
+    fs::create_dir_all(path2)
+        .map_err(|e| format!("Ошибка создания директории для конфига: {}", e))?;
 
-    let file = File::create(path)
-    .map_err(|e| format!("Ошибка создания конфига: {}", e))?;
+    let file = File::create(path).map_err(|e| format!("Ошибка создания конфига: {}", e))?;
     let writer = BufWriter::new(file);
 
     serde_json::to_writer_pretty(writer, &config)
-    .map_err(|e| format!("Ошибка записи конфига: {}", e))?;
+        .map_err(|e| format!("Ошибка записи конфига: {}", e))?;
 
     Ok(config)
 }
 
+fn default_timeout() -> u64 {
+    60
+}
+
+/*
+pub async fn config_lang() -> String {
+    let config = match config_read() {
+            Ok(config) => config,
+            Err(e) => {
+                log::error!("Config read failed: {}", e);
+                return "en".to_string();
+            }
+        };
+
+    let lang: String = config.lang;
+    return lang;
+}
+*/
+
 fn system_lang() -> String {
-    env::var("LANG").expect("Ошибка получения языка").to_string().chars().take(2).collect()
+    env::var("LANG")
+        .expect("Ошибка получения языка")
+        .to_string()
+        .chars()
+        .take(2)
+        .collect()
 }

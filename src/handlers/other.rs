@@ -1,9 +1,8 @@
 use std::process::Command;
 
+//Вспомогательные программы...
 pub async fn check_prog(name: &str) -> bool {
-    let cmd = Command::new("which")
-    .arg(name)
-    .output();
+    let cmd = Command::new("which").arg(name).output();
 
     if cmd.expect("Error..?").status.success() {
         log::info!("{} has been installed!", name);

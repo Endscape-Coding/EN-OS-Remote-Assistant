@@ -1,18 +1,18 @@
-use url::Url;
-use std::io;
-use std::fs;
 use std::env;
-use std::path::PathBuf;
+use std::fs;
+use std::io;
 use std::path::Path;
+use std::path::PathBuf;
 use std::process::Command;
+use url::Url;
 use chrono::Local;
+use ashpd::desktop::screenshot::Screenshot;
 use teloxide::prelude::*;
+use teloxide::types::ChatAction;
 use teloxide::types::InputFile;
 use crate::handlers;
-use crate::handlers::data;
 use crate::handlers::config_read;
-use ashpd::desktop::screenshot::Screenshot;
-
+use crate::handlers::data;
 
 pub async fn screen(bot: Bot, msg: Message) -> io::Result<()> {
     log::info!("Command: Screen");
@@ -29,12 +29,12 @@ pub async fn screen(bot: Bot, msg: Message) -> io::Result<()> {
     let result: io::Result<PathBuf> = if mbwayland() {
         match screenshot().await {
             Ok(path) => Ok(path),
-            Err(e) => Err(e)
+            Err(e) => Err(e),
         }
     } else {
         match screenshot_x11().await {
             Ok(path) => Ok(path),
-            Err(e) => Err(e)
+            Err(e) => Err(e),
         }
     };
 
@@ -44,7 +44,7 @@ pub async fn screen(bot: Bot, msg: Message) -> io::Result<()> {
                 Ok(message) => message,
                 Err(e) => {
                     log::error!("Error send message {}", e);
-                    return Ok(())
+                    return Ok(());
                 }
             };
             let bot_clone = bot.clone();
@@ -52,36 +52,57 @@ pub async fn screen(bot: Bot, msg: Message) -> io::Result<()> {
             let msg_id = smsg.id;
 
             let animation_task = tokio::spawn(async move {
-                let frames = ["Wait... 🕛", "Wait... 🕑","Wait... 🕓",  "Wait... 🕕",  "Wait... 🕗",  "Wait... 🕙"];
+                let frames = [
+                    "Wait... 🕛",
+                    "Wait... 🕑",
+                    "Wait... 🕓",
+                    "Wait... 🕕",
+                    "Wait... 🕗",
+                    "Wait... 🕙",
+                ];
                 let mut i = 0;
                 loop {
                     let _ = bot_clone
-                    .edit_message_text(chat_id, msg_id, frames[i % frames.len()])
-                    .await;
+                        .edit_message_text(chat_id, msg_id, frames[i % frames.len()])
+                        .await;
                     i += 1;
                     tokio::time::sleep(std::time::Duration::from_millis(600)).await;
                 }
             });
 
+            let _ = bot
+                .send_chat_action(msg.chat.id, ChatAction::UploadPhoto)
+                .await;
+
             log::info!("Screen saved to: {}", path.display());
             let photo = InputFile::file(&path);
 
-            let message = if config.lang == "ru" { data::SCREENRU } else { data::SCREENEN };
+            let message = if config.lang == "ru" {
+                data::SCREENRU
+            } else {
+                data::SCREENEN
+            };
 
             let _ = bot.send_photo(msg.chat.id, photo).caption(message).await;
             animation_task.abort();
 
             let _ = match fs::remove_file(path) {
                 Ok(()) => log::info!("Remove screenshot file succesfully!"),
-                Err(e) => log::info!("Failed delete screenshot file: {}", e)
+                Err(e) => log::info!("Failed delete screenshot file: {}", e),
             };
 
             let _ = bot.delete_message(chat_id, msg_id).await;
         }
         Err(e) => {
             log::error!("Screenshot failed: {}", e);
-            let message = if config.lang == "ru" { data::SCREENRUERR } else { data::SCREENENERR };
-            let _ = bot.send_message(msg.chat.id, format!("{}: {}", message, e)).await;
+            let message = if config.lang == "ru" {
+                data::SCREENRUERR
+            } else {
+                data::SCREENENERR
+            };
+            let _ = bot
+                .send_message(msg.chat.id, format!("{}: {}", message, e))
+                .await;
             return Ok(());
         }
     }
@@ -91,37 +112,39 @@ pub async fn screen(bot: Bot, msg: Message) -> io::Result<()> {
 
 async fn screenshot() -> io::Result<PathBuf> {
     let response = Screenshot::request()
-    .interactive(false)
-    .modal(false)
-    .send()
-    .await
-    .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?
-    .response()
-    .map_err(|e| std::io::Error::new(std::io::ErrorKind::PermissionDenied, e))?;
+        .interactive(false)
+        .modal(false)
+        .send()
+        .await
+        .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?
+        .response()
+        .map_err(|e| std::io::Error::new(std::io::ErrorKind::PermissionDenied, e))?;
 
     let uri = response.uri();
 
     let url = Url::parse(uri.as_str())
-    .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidInput, e))?;
+        .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidInput, e))?;
 
-    let path = url.to_file_path()
-    .map_err(|_| std::io::Error::new(std::io::ErrorKind::NotFound, "Not a file URI"))?;
+    let path = url
+        .to_file_path()
+        .map_err(|_| std::io::Error::new(std::io::ErrorKind::NotFound, "Not a file URI"))?;
     log::info!("Path: {}", path.display());
 
     Ok(path)
 }
 
 async fn screenshot_x11() -> io::Result<PathBuf> {
-    if !handlers::check_prog("scrot").await{
-        return Err(std::io::Error::new(std::io::ErrorKind::NotFound, "Scrot not found!"));
+    if !handlers::check_prog("scrot").await {
+        return Err(std::io::Error::new(
+            std::io::ErrorKind::NotFound,
+            "Scrot not found!",
+        ));
     }
     let now = Local::now();
     let time = now.format("%Y-%m-%d %H.%M.%S").to_string();
     let screen = format!("screen{}.png", time);
 
-    Command::new("scrot")
-    .arg(&screen)
-    .status()?;
+    Command::new("scrot").arg(&screen).status()?;
 
     let path = Path::new(&screen);
     Ok(path.to_path_buf())

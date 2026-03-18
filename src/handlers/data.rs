@@ -1,4 +1,5 @@
 // ───────── Startup / Online ─────────
+pub const LIMIT: usize = 4096;
 pub const ONRU: &str = r#"
 <b>EN-OS Remote Assistant v0.4</b>
 
@@ -23,8 +24,7 @@ pub const STARTRU: &str = r#"
 • /start | /help — показать эту справку
 • /setlang — изменить язык интерфейса
 • /filemanager — управление файлами
-• /cmd <code>&lt;команда&gt;</code> — выполнить bash-команду
-• /cmd_output <code>&lt;команда&gt;</code> — выполнить команду с выводом (бот ответит после завершения)
+• /command — меню команд
 • /openlink <code>&lt;ссылка&gt;</code> — открыть ссылку в браузере
 • /screenshot — сделать и отправить скриншот
 • /input — эмуляция ввода с клавиатуры
@@ -43,8 +43,7 @@ pub const STARTEN: &str = r#"
 • /start | /help — show this help message
 • /setlang — change interface language
 • /filemanager — file management
-• /cmd <code>&lt;command&gt;</code> — execute a bash command
-• /cmd_output <code>&lt;command&gt;</code> — run command with output (bot replies after completion)
+• /command — command menu
 • /openlink <code>&lt;link&gt;</code> — open a link in browser
 • /screenshot — capture and send a screenshot
 • /input — simulate keyboard input
@@ -58,8 +57,10 @@ pub const STARTEN: &str = r#"
 pub const SCREENRU: &str = r#"📸 Вот ваш скриншот:"#;
 pub const SCREENEN: &str = r#"📸 Here's your screenshot:"#;
 
-pub const SCREENRUERR: &str = r#"❌ Не удалось сделать скриншот. Попробуйте ещё раз или проверьте настройки:"#;
-pub const SCREENENERR: &str = r#"❌ Couldn't capture screenshot. Please try again or check your settings:"#;
+pub const SCREENRUERR: &str =
+    r#"❌ Не удалось сделать скриншот. Попробуйте ещё раз или проверьте настройки:"#;
+pub const SCREENENERR: &str =
+    r#"❌ Couldn't capture screenshot. Please try again or check your settings:"#;
 
 // ───────── CMD ─────────
 pub const CMDHELPRU: &str = r#"
@@ -74,11 +75,34 @@ pub const CMDHELPEN: &str = r#"
 <pre>Example: /cmd ls -la</pre>
 "#;
 
+pub const COMMANDRU: &str = r#"Меню команд
+/cmd - запуск команды
+/cmd_output - запуск команды с парсингом вывода.
+"#;
+pub const COMMANDEN: &str = r#"Command menu
+/cmd <args> - exec command
+/cmd_output <args> - exec command with parce output.
+"#;
+
 pub const CMDSPAWNRU: &str = r#"🚀 Выполняю:"#;
 pub const CMDSPAWNEN: &str = r#"🚀 Executing:"#;
 
-pub const CMDNOOUTRU: &str = r#"💤 Команда выполнена. Вывод отсутствует — это нормально для некоторых команд."#;
-pub const CMDNOOUTEN: &str = r#"💤 Command completed. No output was generated — this is expected for some commands."#;
+pub const CMDNOOUTRU: &str =
+    r#"💤 Команда выполнена. Вывод отсутствует — это нормально для некоторых команд."#;
+pub const CMDNOOUTEN: &str =
+    r#"💤 Command completed. No output was generated — this is expected for some commands."#;
+
+pub const CMDTIMERU: &str = r#"Таймаут (секунд): "#;
+pub const CMDTIMEEN: &str = r#"Timeout (seconds): "#;
+
+pub const CMDTIMEOUTRU: &str = r#"Время вышло! Выполнялась команда:"#;
+pub const CMDTIMEOUTEN: &str = r#"Time is out! Exec command:"#;
+
+pub const CMDOUTRU: &str = r#"Команда успешно выполнена! Вывод:"#;
+pub const CMDOUTEN: &str = r#"Command exec sucessfully! Output:"#;
+
+pub const CMDOUTERRRU: &str = r#"Команда выполнилась в ошибкой! Вывод:"#;
+pub const CMDOUTERREN: &str = r#"Command exec with error! Output:"#;
 
 // ───────── File Manager ─────────
 pub const FILEMANRU: &str = r#"
@@ -153,6 +177,10 @@ pub const DLMSEN: &str = r#"⚠️ File is too large. Maximum size for sending i
 
 pub const DLNFRU: &str = r#"❌ Файл не найден. Проверьте путь и попробуйте снова."#;
 pub const DLNFEN: &str = r#"❌ File not found. Please check the path and try again."#;
+
+//Upload
+pub const UPSUCRU: &str = r#"Сохранено в: "#;
+pub const UPSUCEN: &str = r#"Saved to: "#;
 
 // ───────── Input Menu ─────────
 pub const INMENURU: &str = r#"
