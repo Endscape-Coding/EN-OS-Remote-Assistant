@@ -1,10 +1,26 @@
+//!
+//! Power Manager - работа с питанием.  
+//! Позволяет выключать, перезагружать, вводить в гибернацию, успылять компьютер. 
+//! Имеет неплохую обработку ошибок
+//! 
 use std::io;
 use tokio::process::Command;
 use teloxide::prelude::*;
 use crate::handlers::data;
 use crate::handlers::config_read;
+use crate::handlers::other::send;
 
-//Работа с питанием. В целом ничего сложного нет, код вполне себе читаемый, а так же считаю эту функцию самой идиоматичной во всем моем проекте, т.к. нет ни сложных вложенных конструкций ни прочей херни.
+///
+/// Работа с питанием (```/powerman```).  
+/// Примеры: ```/powerman - для справки```,  ```/shutdown```, ```/reboot```, ```/sleep```, ```/hybernate```.  
+/// Все работает из одной функции, просто в main.rs функции передается значение в зависимости от команды:  
+/// 0 - Главное меню (```/powerman```)  
+/// 1 - Выключение (```/shutdown```)  
+/// 2 - Перезагрузка (```/reboot```)  
+/// 3 - Сон (```/sleep```)  
+/// 4 - Гибернация (```/hybernate```)  
+///   
+//В целом ничего сложного нет, код вполне себе читаемый, а так же считаю эту функцию самой идиоматичной во всем моем проекте, т.к. нет ни сложных вложенных конструкций ни прочей херни.
 pub async fn powerman(bot: Bot, msg: Message, num: u64) -> io::Result<()> {
     log::info!(
         "Command powerman, num: {}. Reference: 0 - main menu, 1 - shutdown, 2 - reboot, 3 - sleep, 4 - hybernate",
@@ -26,10 +42,7 @@ pub async fn powerman(bot: Bot, msg: Message, num: u64) -> io::Result<()> {
             } else {
                 data::POWERMANEN
             };
-            let _ = bot
-                .send_message(msg.chat.id, message)
-                .parse_mode(teloxide::types::ParseMode::Html)
-                .await;
+            send(&bot, &msg, message).await;
             return Ok(());
         }
         1 => {
@@ -63,7 +76,7 @@ pub async fn powerman(bot: Bot, msg: Message, num: u64) -> io::Result<()> {
         _ => "Invalid input",
     };
 
-    let _ = bot.send_message(msg.chat.id, message).await;
+    send(&bot, &msg, message).await;
 
     let cmd: &str = match num {
         1 => {
@@ -87,16 +100,10 @@ pub async fn powerman(bot: Bot, msg: Message, num: u64) -> io::Result<()> {
     let cmd_status = Command::new("sh").arg("-c").arg(cmd).output().await?;
 
     if !cmd_status.status.success() {
-        let _ = bot
-            .send_message(
-                msg.chat.id,
-                format!(
+        send(&bot, &msg, &format!(
                     "<b>Error shutdown your PC!</b> \nError: <i>{}</i>",
                     String::from_utf8_lossy(&cmd_status.stderr)
-                ),
-            )
-            .parse_mode(teloxide::types::ParseMode::Html)
-            .await;
+                ),).await;
     }
 
     Ok(())

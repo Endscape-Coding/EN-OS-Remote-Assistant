@@ -1,20 +1,20 @@
+//!
+//! Start - стартовая команда.  
+//! Выдает основные кнопки и дает справку по программе
+//! 
+
 use std::io;
 use teloxide::prelude::*;
 use teloxide::types::{KeyboardButton, KeyboardMarkup};
-use crate::handlers::data;
-use crate::handlers::config_read;
+use crate::handlers::{data, get_config};
 
 //Start - Самая база, справка
 pub async fn start(bot: Bot, msg: Message) -> io::Result<()> {
     log::info!("Command: start <3");
 
-    let config = match config_read() {
-        Ok(config) => config,
-        Err(e) => {
-            log::error!("Config read failed: {}", e);
-            let _ = bot.send_message(msg.chat.id, "Config error").await;
-            return Ok(());
-        }
+    let config = match get_config(bot.clone(), msg.chat.id).await {
+        Some(c) => c,
+        None => return Ok(()),
     };
 
     let message = if config.lang == "ru" {

@@ -1,26 +1,26 @@
+//!
+//! Input - работа с эмуляцией ввода.  
+//! Позворляет эмулировать ввод: буквы, цифры а так же популярные сочетания клавиш
+//! 
 use std::io;
 use std::process::Command;
 use teloxide::prelude::*;
 use teloxide::types::{KeyboardButton, KeyboardMarkup};
 use crate::Botcommand;
-use crate::handlers::{config_read, data};
+use crate::handlers::other::send;
+use crate::handlers::{data, get_config};
 
-//Input - Эмуляция ввода
+/// Input - главная функция
 pub async fn input(bot: Bot, msg: Message, command: Botcommand, ydt: bool) -> io::Result<()> {
     match command {
         Botcommand::Input(args) => {
             log::info!("Command: Input");
 
             let mut message;
-            let config = match config_read() {
-                Ok(config) => config,
-                Err(e) => {
-                    log::error!("Config read failed: {}", e);
-                    let _ = bot.send_message(msg.chat.id, "Config error").await;
-                    return Ok(());
-                }
+            let config = match get_config(bot.clone(), msg.chat.id).await {
+                Some(c) => c,
+                None => return Ok(()),
             };
-
             if !ydt {
                 let message = if config.lang == "ru" {
                     data::INERRRU
@@ -255,10 +255,7 @@ pub async fn input(bot: Bot, msg: Message, command: Botcommand, ydt: bool) -> io
                 } else {
                     message = format!("{} <code>{}</code>", String::from(data::INEXECEN), args);
                 }
-                let _ = bot
-                    .send_message(msg.chat.id, &message)
-                    .parse_mode(teloxide::types::ParseMode::Html)
-                    .await;
+                send(&bot, &msg, &message).await;
 
                 match exec_key(&args.trim()) {
                     Ok(_) => {}
@@ -266,10 +263,7 @@ pub async fn input(bot: Bot, msg: Message, command: Botcommand, ydt: bool) -> io
                         io::ErrorKind::InvalidInput => {
                             message = format!("{} <code>{}</code>", "ERROR", "Invalid Input");
                             log::error!("Invalid input");
-                            let _ = bot
-                                .send_message(msg.chat.id, &message)
-                                .parse_mode(teloxide::types::ParseMode::Html)
-                                .await;
+                            send(&bot, &msg, &message).await;
                         }
                         io::ErrorKind::NotFound => {
                             message = format!(
@@ -277,20 +271,14 @@ pub async fn input(bot: Bot, msg: Message, command: Botcommand, ydt: bool) -> io
                                 "ERROR", "Ydotool not found!", "Please, install ydotool!"
                             );
                             log::error!("Invalid input");
-                            let _ = bot
-                                .send_message(msg.chat.id, &message)
-                                .parse_mode(teloxide::types::ParseMode::Html)
-                                .await;
+                            send(&bot, &msg, &message).await;
                         }
                         _ => {
                             println!("Другая ошибка: {:?}", e);
                             message =
                                 format!("{} {} <code>{}</code>", "ERROR", "Ydotool error: ", e);
                             log::error!("Unknown error");
-                            let _ = bot
-                                .send_message(msg.chat.id, &message)
-                                .parse_mode(teloxide::types::ParseMode::Html)
-                                .await;
+                            send(&bot, &msg, &message).await;
                         }
                     },
                 }
@@ -302,7 +290,7 @@ pub async fn input(bot: Bot, msg: Message, command: Botcommand, ydt: bool) -> io
     }
 }
 
-//Запускает эмуляциюыы
+/// Запускает эмуляцию 
 fn exec_key(key: &str) -> io::Result<&str> {
     log::info!("Hotkey: {}", key);
 
@@ -468,7 +456,7 @@ fn exec_key(key: &str) -> io::Result<&str> {
     Ok("Success")
 }
 
-//А вот та самая проверка
+/// А вот та самая проверка как и в main функции...
 fn check_ydt() -> bool {
     let cmd = Command::new("which").arg("ydotool").output();
 
@@ -481,7 +469,7 @@ fn check_ydt() -> bool {
     }
 }
 
-//Само нажатие
+/// Одно нажатие
 fn press(code: u16) -> io::Result<()> {
     let command = format!("ydotool key {}:1 {}:0", code, code);
     log::info!("Ydotool command: {}", command);
@@ -498,7 +486,7 @@ fn press(code: u16) -> io::Result<()> {
     }
 }
 
-//Нажатие двойных комбинаций
+/// Нажатие двойных комбинаций
 fn combotwo(key1: u16, key2: u16) -> io::Result<()> {
     let command = format!("ydotool key {}:1 {}:1 {}:0 {}:0", key1, key2, key2, key1);
     log::info!("Ydotool command: {}", command);
@@ -515,7 +503,7 @@ fn combotwo(key1: u16, key2: u16) -> io::Result<()> {
     }
 }
 
-//Зажатие тройных комбинаций
+/// Зажатие тройных комбинаций
 fn combothree(key1: u16, key2: u16, key3: u16) -> io::Result<()> {
     let command = format!(
         "ydotool key {}:1 {}:1 {}:1 {}:0 {}:0 {}:0",

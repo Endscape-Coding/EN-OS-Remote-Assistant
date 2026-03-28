@@ -1,3 +1,7 @@
+//!
+//! Filemanager - работа с файлами  
+//! Позволяет удалять, скачиваать, загружать файлы на компьютер, переходить по папкам и просматривать директории.
+//! 
 use std::env;
 use std::io;
 use std::io::Read;
@@ -13,19 +17,17 @@ use chrono::Local;
 use walkdir::WalkDir;
 use zip::write::SimpleFileOptions;
 use crate::Botcommand;
-use crate::handlers::{config_read, data};
+use crate::handlers::other::send;
+use crate::handlers::{config_read, get_config, data};
 
 //Работа с файлами. Самое сложное в этом проекте наверное, т.к. кода писать приходится очень много.
+/// Центральная функция
 pub async fn filemanager(bot: Bot, msg: Message) -> io::Result<()> {
     log::info!("Command: filemanager");
 
-    let config = match config_read() {
-        Ok(config) => config,
-        Err(e) => {
-            log::error!("Config read failed: {}", e);
-            let _ = bot.send_message(msg.chat.id, "Config error").await;
-            return Ok(());
-        }
+    let config = match get_config(bot.clone(), msg.chat.id).await {
+        Some(c) => c,
+        None => return Ok(()),
     };
     let current = env::current_dir()?;
 
@@ -60,20 +62,18 @@ pub async fn filemanager(bot: Bot, msg: Message) -> io::Result<()> {
     Ok(())
 }
 
-//Хождение по директориям
+/// Хождение по директориям (```/cd```).   
+/// Пример: ```/cd Documents```.  
+/// Переход в родительскую директорию: ```/cd ..```  
 pub async fn cd(bot: Bot, msg: Message, command: Botcommand) -> io::Result<()> {
     match command {
         Botcommand::Cd(args) => {
             log::info!("Command: Cd");
 
             log::info!("Read config");
-            let config = match config_read() {
-                Ok(config) => config,
-                Err(e) => {
-                    log::error!("Config read failed: {}", e);
-                    let _ = bot.send_message(msg.chat.id, "Config error").await;
-                    return Ok(());
-                }
+            let config = match get_config(bot.clone(), msg.chat.id).await {
+                Some(c) => c,
+                None => return Ok(()),
             };
 
             if args.trim().is_empty() {
@@ -83,10 +83,7 @@ pub async fn cd(bot: Bot, msg: Message, command: Botcommand) -> io::Result<()> {
                     data::CDNOARGSEN
                 };
                 log::info!("No args");
-                let _ = bot
-                    .send_message(msg.chat.id, message)
-                    .parse_mode(teloxide::types::ParseMode::Html)
-                    .await;
+                send(&bot, &msg, message).await;
                 return Ok(());
             }
 
@@ -102,10 +99,7 @@ pub async fn cd(bot: Bot, msg: Message, command: Botcommand) -> io::Result<()> {
                 } else {
                     message = format!("{}: <code>{}</code>", data::CDEN, current.display());
                 }
-                let _ = bot
-                    .send_message(msg.chat.id, message)
-                    .parse_mode(teloxide::types::ParseMode::Html)
-                    .await;
+                send(&bot, &msg, &message).await;
             } else {
                 if config.lang == "ru" {
                     message = format!("{}: <code>{}</code>", data::CDERRU, args);
@@ -113,10 +107,7 @@ pub async fn cd(bot: Bot, msg: Message, command: Botcommand) -> io::Result<()> {
                     message = format!("{}: <code>{}</code>", data::CDEREN, args);
                 }
 
-                let _ = bot
-                    .send_message(msg.chat.id, message)
-                    .parse_mode(teloxide::types::ParseMode::Html)
-                    .await;
+                send(&bot, &msg, &message).await;
             }
             Ok(())
         }
@@ -124,20 +115,17 @@ pub async fn cd(bot: Bot, msg: Message, command: Botcommand) -> io::Result<()> {
     }
 }
 
-//Удаление файлов
+/// Удаление файлов (```/rm```).  
+/// Пример команды: ```/rm file.txt```  
 pub async fn rm(bot: Bot, msg: Message, command: Botcommand) -> io::Result<()> {
     match command {
         Botcommand::Rm(args) => {
             log::info!("Command: Rm");
 
             log::info!("Read config");
-            let config = match config_read() {
-                Ok(config) => config,
-                Err(e) => {
-                    log::error!("Config read failed: {}", e);
-                    let _ = bot.send_message(msg.chat.id, "Config error").await;
-                    return Ok(());
-                }
+            let config = match get_config(bot.clone(), msg.chat.id).await {
+                Some(c) => c,
+                None => return Ok(()),
             };
 
             if args.trim().is_empty() {
@@ -147,10 +135,7 @@ pub async fn rm(bot: Bot, msg: Message, command: Botcommand) -> io::Result<()> {
                     data::RMNOARGSEN
                 };
                 log::info!("No args");
-                let _ = bot
-                    .send_message(msg.chat.id, message)
-                    .parse_mode(teloxide::types::ParseMode::Html)
-                    .await;
+                send(&bot, &msg, message).await;
                 return Ok(());
             }
 
@@ -173,14 +158,11 @@ pub async fn rm(bot: Bot, msg: Message, command: Botcommand) -> io::Result<()> {
                             } else {
                                 data::RMSUCEN
                             };
-                            let _ = bot.send_message(msg.chat.id, message).await;
+                            send(&bot, &msg, message).await;
                         }
                         Err(e) => {
                             log::error!("Error remove dir!, {}", e);
-                            let _ = bot
-                                .send_message(msg.chat.id, format!("Cannot remove, error: {}", e))
-                                .await
-                                .ok();
+                            send(&bot, &msg, &format!("Cannot remove, error: {}", e)).await;
                         }
                     }
                 } else {
@@ -192,7 +174,7 @@ pub async fn rm(bot: Bot, msg: Message, command: Botcommand) -> io::Result<()> {
                             } else {
                                 data::RMSUCEN
                             };
-                            let _ = bot.send_message(msg.chat.id, message).await;
+                            send(&bot, &msg, message).await;
                         }
                         Err(e) => {
                             log::error!("Error remove file!, {}", e);
@@ -209,7 +191,7 @@ pub async fn rm(bot: Bot, msg: Message, command: Botcommand) -> io::Result<()> {
     }
 }
 
-//Просмотр содержимого директории.
+/// Просмотр содержимого текущей директории (```/ls```).
 pub async fn ls(bot: Bot, msg: Message) -> io::Result<()> {
     log::info!("Command: ls");
     let config = config_read();
@@ -231,10 +213,7 @@ pub async fn ls(bot: Bot, msg: Message) -> io::Result<()> {
         let line = format!("\n<code>{}</code>", name);
         if partmessage.len() + line.len() > data::LIMIT {
             log::info!("Message > 4096 symbols, cutting...");
-            let _ = bot
-                .send_message(msg.chat.id, &partmessage)
-                .parse_mode(teloxide::types::ParseMode::Html)
-                .await;
+            send(&bot, &msg, &partmessage).await;
             partmessage = header.clone();
         }
         partmessage.push_str(&line);
@@ -248,19 +227,19 @@ pub async fn ls(bot: Bot, msg: Message) -> io::Result<()> {
     Ok(())
 }
 
-//Скачивание файлов С компа. Самая мутарная и сложная функция, так еще куча вложенных конструкций. Но для переправки 20 мб файлов пойдет.
+///
+/// Скачивание файлов c компа (```/download```). Пример: ```/download file.txt```.  
+/// Максимальный размер скачиваемого файла/директории не более 20 мегабайт  
+/// 
+// Самая мутарная и сложная функция, так еще куча вложенных конструкций. Но для переправки 20 мб файлов пойдет.
 pub async fn download(bot: Bot, msg: Message, command: Botcommand) -> io::Result<()> {
     match command {
         Botcommand::Download(args) => {
             log::info!("Command: download");
 
-            let config = match config_read() {
-                Ok(config) => config,
-                Err(e) => {
-                    log::error!("Config read failed: {}", e);
-                    let _ = bot.send_message(msg.chat.id, "Config error").await;
-                    return Ok(());
-                }
+            let config = match get_config(bot.clone(), msg.chat.id).await {
+                Some(c) => c,
+                None => return Ok(()),
             };
 
             let path = Path::new(&args);
@@ -310,7 +289,7 @@ pub async fn download(bot: Bot, msg: Message, command: Botcommand) -> io::Result
                                 let _ = bot
                                     .delete_message(smsg.clone().unwrap().chat.id, smsg.unwrap().id)
                                     .await;
-                                let _ = bot.send_message(msg.chat.id, message).await;
+                                send(&bot, &msg, message).await;
                             } else {
                                 let _ = bot
                                     .send_chat_action(msg.chat.id, ChatAction::UploadDocument)
@@ -353,7 +332,7 @@ pub async fn download(bot: Bot, msg: Message, command: Botcommand) -> io::Result
                                     data::DLMSEN
                                 };
 
-                                let _ = bot.send_message(msg.chat.id, message).await;
+                                send(&bot, &msg, message).await;
                             } else {
                                 let _ = bot
                                     .send_chat_action(msg.chat.id, ChatAction::UploadDocument)
@@ -381,10 +360,7 @@ pub async fn download(bot: Bot, msg: Message, command: Botcommand) -> io::Result
                     data::DLNFEN
                 };
 
-                let _ = bot
-                    .send_message(msg.chat.id, message)
-                    .parse_mode(teloxide::types::ParseMode::Html)
-                    .await;
+                send(&bot, &msg, message).await;
             }
             Ok(())
         }
@@ -419,15 +395,13 @@ fn zip_dir(src_dir: &str, dst_file: &str) -> zip::result::ZipResult<()> {
     Ok(())
 }
 
-//Загрузка файлов НА пк
+///
+/// Загрузка файлов НА пк (просто отправь сообщение как файл)
+/// 
 pub async fn upload(bot: Bot, msg: Message) -> std::io::Result<()> {
-    let config = match config_read() {
-        Ok(config) => config,
-        Err(e) => {
-            log::error!("Config read failed: {}", e);
-            let _ = bot.send_message(msg.chat.id, "Config error").await;
-            return Ok(());
-        }
+    let config = match get_config(bot.clone(), msg.chat.id).await {
+        Some(c) => c,
+        None => return Ok(()),
     };
 
     let doc = msg
@@ -474,15 +448,15 @@ pub async fn upload(bot: Bot, msg: Message) -> std::io::Result<()> {
         format!("{}: <code>{}</code>", data::UPSUCEN, full_path.display())
     };
 
-    let _ = bot
-        .send_message(msg.chat.id, message)
-        .parse_mode(teloxide::types::ParseMode::Html)
-        .await;
+    send(&bot, &msg, &message).await;
 
     Ok(())
 }
 
-//Вспомогательная, может перенесу в other
+///
+/// Отдает размер директории (для ```download```)
+/// 
+// Вспомогательная функция, может перенесу в other
 fn get_dir_size<P: AsRef<Path>>(path: P) -> u64 {
     WalkDir::new(path)
         .into_iter()

@@ -1,3 +1,6 @@
+//!
+//! Lang - работа с языком
+//! 
 use std::io;
 use teloxide::prelude::*;
 use teloxide::types::{CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup};
@@ -8,7 +11,8 @@ fn to_io_err<E: std::fmt::Display>(e: E) -> io::Error {
     io::Error::new(io::ErrorKind::Other, e.to_string())
 }
 
-//Выбор языка через кнопки. Впервые знакомился с inline кнопками.
+/// Выбор языка через кнопки.
+/// Пример: ```/setlang```. Далее выбираете нужный язык.
 pub async fn setlang(bot: Bot, msg: Message) -> io::Result<()> {
     let buttons = [[
         InlineKeyboardButton::callback("🇷🇺 Русский", "ru"),
@@ -25,6 +29,7 @@ pub async fn setlang(bot: Bot, msg: Message) -> io::Result<()> {
     Ok(())
 }
 
+/// Обращение к бэкенду
 pub async fn setlang_callback(bot: Bot, q: CallbackQuery) -> io::Result<()> {
     if let Some(data) = q.data {
         bot.answer_callback_query(q.id).await.map_err(to_io_err)?;
@@ -50,7 +55,9 @@ pub async fn setlang_callback(bot: Bot, q: CallbackQuery) -> io::Result<()> {
     Ok(())
 }
 
-//Херня какая то, но работает.
+///
+/// Сам бэкенд, просто записывает код языка в конфиг.
+/// 
 async fn set_lang_backend(lang: &str) -> io::Result<()> {
     if let Ok(mut config) = config_read() {
         config.lang = String::from(lang);

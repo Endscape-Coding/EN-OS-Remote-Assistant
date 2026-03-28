@@ -1,22 +1,23 @@
+//!
+//! Command - Работа с командами.  
+//! Позволяет запускать различные команды. Поддерживаются все команды кроме sudo
+//! 
 use std::io;
 use teloxide::prelude::*;
 use teloxide::types::{KeyboardButton, KeyboardMarkup};
 use tokio::process::Command;
 use tokio::time::{Duration, timeout};
 use crate::Botcommand;
-use crate::handlers::{config_read, data};
+use crate::handlers::{get_config, data};
+use crate::handlers::other::send;
 
-//Command - справочник по командам.
+/// Command - справочник по работе с командами.
 pub async fn command(bot: Bot, msg: Message) -> io::Result<()> {
     log::info!("Command: command");
 
-    let config = match config_read() {
-        Ok(config) => config,
-        Err(e) => {
-            log::error!("Config read failed: {}", e);
-            let _ = bot.send_message(msg.chat.id, "Config error").await;
-            return Ok(());
-        }
+    let config = match get_config(bot.clone(), msg.chat.id).await {
+        Some(c) => c,
+        None => return Ok(()),
     };
 
     let message = if config.lang == "ru" {
@@ -29,6 +30,7 @@ pub async fn command(bot: Bot, msg: Message) -> io::Result<()> {
 
     let keyboard = KeyboardMarkup::new(buttons).resize_keyboard();
 
+    //Тут не делаем через send() из за добавления клавиатуры.
     let _ = bot
         .send_message(msg.chat.id, message)
         .parse_mode(teloxide::types::ParseMode::Html)
@@ -38,19 +40,15 @@ pub async fn command(bot: Bot, msg: Message) -> io::Result<()> {
     Ok(())
 }
 
-//Cmd spawn, то есть не выдает output, зато бот не лагает после выполнения.
+/// Cmd spawn, то есть не выдает output, зато бот отвечает во время выполнения.
 pub async fn cmd(bot: Bot, msg: Message, command: Botcommand) -> io::Result<()> {
     match command {
         Botcommand::Cmd(args) => {
             log::info!("Command: cmd");
 
-            let config = match config_read() {
-                Ok(config) => config,
-                Err(e) => {
-                    log::error!("Config read failed: {}", e);
-                    let _ = bot.send_message(msg.chat.id, "Config error").await;
-                    return Ok(());
-                }
+            let config = match get_config(bot.clone(), msg.chat.id).await {
+                Some(c) => c,
+                None => return Ok(()),
             };
 
             if args.trim().is_empty() {
@@ -60,10 +58,7 @@ pub async fn cmd(bot: Bot, msg: Message, command: Botcommand) -> io::Result<()> 
                     data::CMDHELPEN
                 };
 
-                let _ = bot
-                    .send_message(msg.chat.id, message)
-                    .parse_mode(teloxide::types::ParseMode::Html)
-                    .await;
+                send(&bot, &msg, message).await;
                 return Ok(());
             }
 
@@ -77,28 +72,22 @@ pub async fn cmd(bot: Bot, msg: Message, command: Botcommand) -> io::Result<()> 
 
             log::info!("Exec command {}", &args);
 
-            let _ = bot
-                .send_message(msg.chat.id, format!("{} {}", message, &args))
-                .await;
+            send(&bot, &msg, &format!("{} {}", message, &args)).await;
             Ok(())
         }
         _ => Ok(()),
     }
 }
 
-//Cmd output: Ждет завершения программы или таймаута.
+/// Cmd output: Ждет завершения программы или таймаута.
 pub async fn cmd_output(bot: Bot, msg: Message, command: Botcommand) -> io::Result<()> {
     match command {
         Botcommand::CmdOutput(args) => {
             log::info!("Command: cmd_output");
 
-            let config = match config_read() {
-                Ok(config) => config,
-                Err(e) => {
-                    log::error!("Config read failed: {}", e);
-                    let _ = bot.send_message(msg.chat.id, "Config error").await;
-                    return Ok(());
-                }
+            let config = match get_config(bot.clone(), msg.chat.id).await {
+                Some(c) => c,
+                None => return Ok(()),
             };
 
             let timeout_secs = Duration::from_secs(config.cmd_timeout);
@@ -109,19 +98,13 @@ pub async fn cmd_output(bot: Bot, msg: Message, command: Botcommand) -> io::Resu
                 } else {
                     data::CMDHELPEN
                 };
+                send(&bot, &msg, message).await;
 
-                let _ = bot
-                    .send_message(msg.chat.id, message)
-                    .parse_mode(teloxide::types::ParseMode::Html)
-                    .await;
                 return Ok(());
             }
             if args.trim().chars().last() == Some('&') {
                 let message = "Dont exec command with &, bot can dont responce!".to_string();
-                let _ = bot
-                    .send_message(msg.chat.id, message)
-                    .parse_mode(teloxide::types::ParseMode::Html)
-                    .await;
+                send(&bot, &msg, &message).await;
                 return Ok(());
             }
 
@@ -143,10 +126,7 @@ pub async fn cmd_output(bot: Bot, msg: Message, command: Botcommand) -> io::Resu
                 )
             };
 
-            let _ = bot
-                .send_message(msg.chat.id, message)
-                .parse_mode(teloxide::types::ParseMode::Html)
-                .await;
+            send(&bot, &msg, &message).await;
 
             let command = timeout(
                 timeout_secs,
@@ -159,7 +139,7 @@ pub async fn cmd_output(bot: Bot, msg: Message, command: Botcommand) -> io::Resu
                 Ok(Ok(out)) => out,
                 Ok(Err(e)) => {
                     log::error!("Exec error: {}", e);
-                    let _ = bot.send_message(msg.chat.id, "Exec error: {e}").await;
+                    send(&bot, &msg, "Exec error: {e}").await;
                     return Ok(());
                 }
                 Err(_) => {
@@ -169,10 +149,8 @@ pub async fn cmd_output(bot: Bot, msg: Message, command: Botcommand) -> io::Resu
                     } else {
                         format!("{}\n<code>{}</code>", data::CMDTIMEOUTEN, args)
                     };
-                    let _ = bot
-                        .send_message(msg.chat.id, message)
-                        .parse_mode(teloxide::types::ParseMode::Html)
-                        .await;
+                    send(&bot, &msg, &message).await;
+
                     return Ok(());
                 }
             };
@@ -219,10 +197,7 @@ pub async fn cmd_output(bot: Bot, msg: Message, command: Botcommand) -> io::Resu
                 };
             }
 
-            let _ = bot
-                .send_message(msg.chat.id, message)
-                .parse_mode(teloxide::types::ParseMode::Html)
-                .await;
+            send(&bot, &msg, &message).await;
             Ok(())
         }
         _ => Ok(()),

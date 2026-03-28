@@ -1,10 +1,17 @@
+//!
+//! Link - открытие ссылок
+//! 
 use std::io;
 use teloxide::prelude::*;
 use tokio::process::Command;
 use crate::handlers::config_read;
+use crate::handlers::other::send;
 use crate::{Botcommand, handlers::data};
 
-//Тут все легко: просто открывает ссылку.
+///
+/// Все легко: программа открывает ссылку через xdg-open.
+/// Пример: ```/openlink en-os.ru```
+/// 
 pub async fn openlink(bot: Bot, msg: Message, command: Botcommand) -> io::Result<()> {
     match command {
         Botcommand::Openlink(args) => {
@@ -25,10 +32,7 @@ pub async fn openlink(bot: Bot, msg: Message, command: Botcommand) -> io::Result
                     data::LINKHELPEN
                 };
                 log::info!("No args");
-                let _ = bot
-                    .send_message(msg.chat.id, message)
-                    .parse_mode(teloxide::types::ParseMode::Html)
-                    .await;
+                send(&bot, &msg, message).await;
                 return Ok(());
             } else {
                 let message = if config.lang == "ru" {

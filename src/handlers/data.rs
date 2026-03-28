@@ -1,4 +1,6 @@
-// ───────── Startup / Online ─────────
+//! Переводы
+//! Доступные языки: Английский и Русский.
+//! Переводом занимался я, но кое что подправляла ИИшка.
 pub const LIMIT: usize = 4096;
 pub const ONRU: &str = r#"
 <b>EN-OS Remote Assistant v0.4</b>
@@ -8,20 +10,21 @@ pub const ONRU: &str = r#"
 "#;
 
 pub const ONEN: &str = r#"
-<b>EN-OS Remote Assistant v0.4</b>
+<b>EN-OS Remote Assistant v0.5</b>
 
 ✅ System is ready to go!
 Use /start or /help to view available commands.
 "#;
 
-// ───────── Help / Start ─────────
+/// Help / Start
 pub const STARTRU: &str = r#"
-<b>EN-OS Remote Assistant v0.4</b>
+<b>EN-OS Remote Assistant v0.5</b>
 <i>Удалённое управление вашей системой через Telegram</i>
 
 📋 <b>Доступные команды:</b>
 
 • /start | /help — показать эту справку
+• /settings — настройка remote assistant
 • /setlang — изменить язык интерфейса
 • /filemanager — управление файлами
 • /command — меню команд
@@ -41,6 +44,7 @@ pub const STARTEN: &str = r#"
 📋 <b>Available commands:</b>
 
 • /start | /help — show this help message
+• /settings — remote assistant settings
 • /setlang — change interface language
 • /filemanager — file management
 • /command — command menu
@@ -53,7 +57,27 @@ pub const STARTEN: &str = r#"
 🟢 <i>System is active and ready for commands</i>
 "#;
 
-// ───────── Screenshot ─────────
+/// Settings
+pub const SETTINGSRU: &str = r#"
+<b>EN-OS Remote Assistant v0.5</b>
+Настройки
+
+• /setlang - Выбор языка
+• /set_timeout &lt;сек&gt; - Таймаут для команды в cmd_output
+• /set_notify - Включить/выключить уведомления
+"#;
+
+pub const SETTINGSEN: &str = r#"
+<b>EN-OS Remote Assistant v0.5</b>
+Settings
+
+• /setlang - Change language
+• /set_timeout &lt;сек&gt; - cmd_output timeout
+• /set_+notify - Turn on/off notification at the start.
+
+"#;
+
+/// Screenshot
 pub const SCREENRU: &str = r#"📸 Вот ваш скриншот:"#;
 pub const SCREENEN: &str = r#"📸 Here's your screenshot:"#;
 
@@ -62,7 +86,7 @@ pub const SCREENRUERR: &str =
 pub const SCREENENERR: &str =
     r#"❌ Couldn't capture screenshot. Please try again or check your settings:"#;
 
-// ───────── CMD ─────────
+/// CMD
 pub const CMDHELPRU: &str = r#"
 ⚠️ Пожалуйста, укажите команду после /cmd
 
@@ -104,7 +128,7 @@ pub const CMDOUTEN: &str = r#"Command exec sucessfully! Output:"#;
 pub const CMDOUTERRRU: &str = r#"Команда выполнилась в ошибкой! Вывод:"#;
 pub const CMDOUTERREN: &str = r#"Command exec with error! Output:"#;
 
-// ───────── File Manager ─────────
+/// File Manager
 pub const FILEMANRU: &str = r#"
 <b>📁 Файловый менеджер</b>
 
@@ -127,7 +151,7 @@ pub const FILEMANEN: &str = r#"
 💡 <i>Both absolute and relative paths are supported</i>
 "#;
 
-// ───────── CD ─────────
+/// CD (Переход по папкам)
 pub const CDNOARGSRU: &str = r#"
 💡 Укажите путь после /cd
 
@@ -148,11 +172,11 @@ pub const CDEN: &str = r#"📁 Now in:"#;
 pub const CDERRU: &str = r#"❌ Директория не найдена. Проверьте путь и попробуйте снова."#;
 pub const CDEREN: &str = r#"❌ Directory not found. Please check the path and try again."#;
 
-// ───────── LS ─────────
+/// LS (просмотр директории)
 pub const LSRU: &str = r#"📂 Содержимое:"#;
 pub const LSEN: &str = r#"📂 Contents:"#;
 
-// ───────── RM (Remove) ─────────
+///RM (удалить)
 pub const RMNOARGSRU: &str = r#"
 💡 Укажите путь к файлу или папке после /rm
 
@@ -171,18 +195,18 @@ pub const RMEN: &str = r#"🗑️ Removing:"#;
 pub const RMSUCRU: &str = r#"✅ Удалено успешно!"#;
 pub const RMSUCEN: &str = r#"✅ Successfully removed!"#;
 
-// ───────── Download ─────────
+/// Download (скачивание файлов С компьютера)
 pub const DLMSRU: &str = r#"⚠️ Файл слишком большой. Максимальный размер для отправки — 20 МБ."#;
 pub const DLMSEN: &str = r#"⚠️ File is too large. Maximum size for sending is 20 MB."#;
 
 pub const DLNFRU: &str = r#"❌ Файл не найден. Проверьте путь и попробуйте снова."#;
 pub const DLNFEN: &str = r#"❌ File not found. Please check the path and try again."#;
 
-//Upload
+/// Upload (загрузка файлов НА компьютер)
 pub const UPSUCRU: &str = r#"Сохранено в: "#;
 pub const UPSUCEN: &str = r#"Saved to: "#;
 
-// ───────── Input Menu ─────────
+/// Input Menu (работа с эмуляцией ввода)
 pub const INMENURU: &str = r#"
 <b>⌨️ Меню ввода</b>
 <i>Нажмите на кнопку, чтобы эмулировать нажатие клавиши или комбинации</i>
@@ -206,7 +230,7 @@ pub const INERREN: &str = r#"
 pub const INEXECRU: &str = r#"⌨️ Эмулирую:"#;
 pub const INEXECEN: &str = r#"⌨️ Simulating:"#;
 
-// ───────── Power Manager ─────────
+/// Power Manager (работа с питанием)
 pub const POWERMANRU: &str = r#"
 <b>🔋 Менеджер питания</b>
 
@@ -241,7 +265,7 @@ pub const SLEEPEN: &str = r#"😴 Entering sleep mode..."#;
 pub const SUPSRU: &str = r#"💤 Ухожу в гибернацию..."#;
 pub const SUPSEN: &str = r#"💤 Entering hibernation..."#;
 
-// ───────── Open Link ─────────
+/// Open Link (открытие ссылок)
 pub const LINKHELPRU: &str = r#"
 💡 Отправьте ссылку в формате:
 

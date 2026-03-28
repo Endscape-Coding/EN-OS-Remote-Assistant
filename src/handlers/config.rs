@@ -1,28 +1,38 @@
+//! 
+//! Работа с конфигом.  
+//! Основной путь для конфига: ```~./config/en-os/remote_assistant/settings.json```
+//!
 use std::env;
 use std::env::var;
 use std::fs::{self, File};
 use std::io::{BufReader, BufWriter, Write};
 use std::path::Path;
 use serde::{Deserialize, Serialize};
+use teloxide::prelude::*;
 
+/// Структура конфига
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
     pub lang: String,
+    #[serde(default = "default_notify")]
+    pub notify: bool,
     #[serde(default = "default_timeout")]
     pub cmd_timeout: u64,
 }
 
+/// Дефолтный конфиг
 impl Default for Config {
     fn default() -> Self {
         Self {
             lang: system_lang(),
+            notify: true,
             cmd_timeout: 60,
         }
     }
 }
 
 //В конфиге все не так сложно.
-//Чтение конфига
+/// Чтение конфига
 pub fn config_read() -> Result<Config, String> {
     let path = format!(
         "{}/.config/en-os/remote_assistant/settings.json",
@@ -62,7 +72,7 @@ pub fn config_read() -> Result<Config, String> {
     }
 }
 
-//Запись в конфиг
+/// Запись в конфиг
 pub fn config_write(config: Config) -> Result<Config, String> {
     log::info!("Write to config...");
 
@@ -93,6 +103,10 @@ fn default_timeout() -> u64 {
     60
 }
 
+fn default_notify() -> bool {
+    true
+}
+
 /*
 pub async fn config_lang() -> String {
     let config = match config_read() {
@@ -108,6 +122,7 @@ pub async fn config_lang() -> String {
 }
 */
 
+/// Определение языка по системному
 fn system_lang() -> String {
     env::var("LANG")
         .expect("Ошибка получения языка")
@@ -115,4 +130,16 @@ fn system_lang() -> String {
         .chars()
         .take(2)
         .collect()
+}
+
+/// Функция для отправки конфига
+pub async fn get_config(bot: Bot, id: ChatId) -> Option<Config> {
+    match config_read() {
+        Ok(c) => Some(c),
+        Err(e) => {
+            log::error!("Config error: {}", e);
+            let _ = bot.send_message(id, "Config error").await;
+            None
+        }
+    }
 }

@@ -1,0 +1,42 @@
+async fn proxy_work() -> Client {
+    let config = handlers::config_read;
+    let mut builder = Client::builder()
+    .timeout(Duration::from_secs(120))
+    .connect_timeout(Duration::from_secs(30));
+
+    if let (Ok(http_proxy), Ok(socks5_proxy)) = (env::var("HTTP_PROXY"), env::var("SOCKS5_PROXY")) {
+        log::info!("Check proxies:");
+
+        if check_proxy(&http_proxy, "HTTP") {
+            builder = builder.proxy(Proxy::http(&http_proxy).expect("Invalid HTTP proxy"));
+        } else if check_proxy(&socks5_proxy, "SOCKS") {
+            builder = builder.proxy(Proxy::all(&socks5_proxy).expect("Invalid SOCKS5 proxy"));
+        } else {
+            log::warn!("No proxy is working");
+        }
+    } else if let Ok(proxy_url) = env::var("HTTP_PROXY") {
+        if check_proxy(&proxy_url, "HTTP") {
+            log::info!("Use HTTP proxy: {}", proxy_url);
+            builder = builder.proxy(Proxy::http(&proxy_url).expect("Invalid HTTP proxy"));
+        } else {
+            if config().unwrap().notify{
+                let _ = notify("Error proxy", "Check your internet connection", "error", 7500).await;
+                log::error!("Error HTTPS proxy!");
+            }
+        }
+    } else if let Ok(proxy_url) = env::var("SOCKS5_PROXY") {
+        if check_proxy(&proxy_url, "SOCKS") {
+            log::info!("Use SOCKS5 proxy: {}", proxy_url);
+            builder = builder.proxy(Proxy::all(&proxy_url).expect("Invalid SOCKS5 proxy"));
+        } else {
+            if config().unwrap().notify{
+                let _ = notify("Error proxy", "Check your internet connection", "error", 7500).await;
+                log::error!("Error Socks proxy!");
+            }
+        }
+    } else {
+        log::info!("No proxy..");
+    }
+
+    builder.build().expect("Failed to build HTTP client")
+}

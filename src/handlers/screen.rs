@@ -1,3 +1,7 @@
+//!
+//! Screen - Работа со скриншотами.  
+//! Позволяет делать скриншоты как в wayland, так и в X11 графических оболочках.  
+//! 
 use std::env;
 use std::fs;
 use std::io;
@@ -13,7 +17,9 @@ use teloxide::types::InputFile;
 use crate::handlers;
 use crate::handlers::config_read;
 use crate::handlers::data;
+use crate::handlers::other::send;
 
+/// Главная функция
 pub async fn screen(bot: Bot, msg: Message) -> io::Result<()> {
     log::info!("Command: Screen");
 
@@ -21,7 +27,7 @@ pub async fn screen(bot: Bot, msg: Message) -> io::Result<()> {
         Ok(config) => config,
         Err(e) => {
             log::error!("Config read failed: {}", e);
-            let _ = bot.send_message(msg.chat.id, "Config error").await;
+            send(&bot, &msg, "!Config error!").await;
             return Ok(());
         }
     };
@@ -83,7 +89,21 @@ pub async fn screen(bot: Bot, msg: Message) -> io::Result<()> {
                 data::SCREENEN
             };
 
-            let _ = bot.send_photo(msg.chat.id, photo).caption(message).await;
+            match bot.send_photo(msg.chat.id, photo).caption(message).await {
+                Ok(_) => log::info!("Screenshot send successfully!"),
+                Err(e) => {
+                    log::error!("Failed to send screenshot: {}", e);
+                    log::error!("Screenshot Failed: {}", e);
+                    let message = if config.lang == "ru" {
+                        "Ошибка отправки скриншота"
+                    } else {
+                        "Error send screenshot"
+                    };
+                    let _ = bot
+                        .send_message(msg.chat.id, format!("{}: {}", message, e))
+                        .await;      
+                }
+            }
             animation_task.abort();
 
             let _ = match fs::remove_file(path) {
@@ -94,15 +114,13 @@ pub async fn screen(bot: Bot, msg: Message) -> io::Result<()> {
             let _ = bot.delete_message(chat_id, msg_id).await;
         }
         Err(e) => {
-            log::error!("Screenshot failed: {}", e);
+            log::error!("Screenshot Failed: {}", e);
             let message = if config.lang == "ru" {
                 data::SCREENRUERR
             } else {
                 data::SCREENENERR
             };
-            let _ = bot
-                .send_message(msg.chat.id, format!("{}: {}", message, e))
-                .await;
+            send(&bot, &msg, &format!("{}: {}", message, e)).await;
             return Ok(());
         }
     }
@@ -110,6 +128,7 @@ pub async fn screen(bot: Bot, msg: Message) -> io::Result<()> {
     Ok(())
 }
 
+/// Функция скришота для Wayland
 async fn screenshot() -> io::Result<PathBuf> {
     let response = Screenshot::request()
         .interactive(false)
@@ -133,6 +152,7 @@ async fn screenshot() -> io::Result<PathBuf> {
     Ok(path)
 }
 
+/// Функция скриншота для X11
 async fn screenshot_x11() -> io::Result<PathBuf> {
     if !handlers::check_prog("scrot").await {
         return Err(std::io::Error::new(
@@ -150,6 +170,7 @@ async fn screenshot_x11() -> io::Result<PathBuf> {
     Ok(path.to_path_buf())
 }
 
+/// Проверка на Wayland
 fn mbwayland() -> bool {
     let output = env::var("XDG_SESSION_TYPE").unwrap_or("x11".to_string());
 
