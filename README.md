@@ -58,7 +58,7 @@ The .env file must be in the same folder as the binary or in the folder where yo
 > 🔒 **Tip:** Add `.env` to your `.gitignore` file to prevent accidentally committing secrets to GitHub.
 
 ### 3. Build and Run
-1: Install ```Rustup```, ```ydotool``` and ```scrot``` (if you have x11 environment)
+1: Install ```Rustup```, ```ydotool``` and ```scrot``` (if you have x11 environment)  
 2: Set up the Ydotool  
 Install: 
 ```bash
