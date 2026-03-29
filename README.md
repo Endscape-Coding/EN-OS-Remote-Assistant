@@ -60,7 +60,10 @@ The .env file must be in the same folder as the binary or in the folder where yo
 ### 3. Build and Run
 1: Install ```Rustup```, ```ydotool``` and ```scrot``` (if you have x11 environment)
 2: Set up the Ydotool  
-```soon```
+Install: ```sudo pacman -S ydotool```  
+Create udev rule: ```echo 'KERNEL=="uinput", MODE="0660", GROUP="input", OPTIONS+="static_node=uinput"' | sudo tee "/etc/udev/rules.d/99-uinput.rules" > /dev/null```  
+Install yorself to input group: ```gpasswd -a $USER input```  
+Reboot yor PC.
 2: Compile the project:
 ```rustup target add x86_64-unknown-linux-musl```  
 ```cargo build --release --target x86_64-unknown-linux-musl```  
