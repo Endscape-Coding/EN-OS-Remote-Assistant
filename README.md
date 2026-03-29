@@ -60,13 +60,16 @@ The .env file must be in the same folder as the binary or in the folder where yo
 ### 3. Build and Run
 1: Install ```Rustup```, ```ydotool``` and ```scrot``` (if you have x11 environment)
 2: Set up the Ydotool  
-Install: ```bash
+Install: 
+```bash
 sudo pacman -S ydotool
 ```  
-Create udev rule: ```bash 
+Create udev rule: 
+```bash 
 echo 'KERNEL=="uinput", MODE="0660", GROUP="input", OPTIONS+="static_node=uinput"' | sudo tee "/etc/udev/rules.d/99-uinput.rules" > /dev/null
 ```  
-Install yorself to input group: ```bash
+Install yorself to input group: 
+```bash
 gpasswd -a $USER input
 ```  
 Reboot yor PC.  
