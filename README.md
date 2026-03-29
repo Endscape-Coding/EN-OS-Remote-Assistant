@@ -79,12 +79,10 @@ Reboot yor PC.
 ```bash
 rustup target add x86_64-unknown-linux-musl
 ```  
-
 ```bash
 cargo build --release --target x86_64-unknown-linux-musl
 ```  
 4.Your binary file spawn in ```./target/x86_64-unknown-linux-musl/release/```  
-
 5. You can create desktop file in ~.config/autostart for execution file when turning on the computer.  
 
 ---
