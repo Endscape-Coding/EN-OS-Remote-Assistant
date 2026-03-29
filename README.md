@@ -73,6 +73,7 @@ Install yorself to input group:
 gpasswd -a $USER input
 ```  
 Reboot yor PC.  
+  
 2: Compile the project:
 ```bash
 rustup target add x86_64-unknown-linux-musl
