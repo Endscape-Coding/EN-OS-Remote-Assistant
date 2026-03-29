@@ -60,15 +60,25 @@ The .env file must be in the same folder as the binary or in the folder where yo
 ### 3. Build and Run
 1: Install ```Rustup```, ```ydotool``` and ```scrot``` (if you have x11 environment)
 2: Set up the Ydotool  
-Install: ```sudo pacman -S ydotool```  
-Create udev rule: ```echo 'KERNEL=="uinput", MODE="0660", GROUP="input", OPTIONS+="static_node=uinput"' | sudo tee "/etc/udev/rules.d/99-uinput.rules" > /dev/null```  
-Install yorself to input group: ```gpasswd -a $USER input```  
-Reboot yor PC.
+Install: bash```
+sudo pacman -S ydotool
+```  
+Create udev rule: ```bash 
+echo 'KERNEL=="uinput", MODE="0660", GROUP="input", OPTIONS+="static_node=uinput"' | sudo tee "/etc/udev/rules.d/99-uinput.rules" > /dev/null
+```  
+Install yorself to input group: ```bash
+gpasswd -a $USER input
+```  
+Reboot yor PC.  
 2: Compile the project:
-```rustup target add x86_64-unknown-linux-musl```  
-```cargo build --release --target x86_64-unknown-linux-musl```  
+```bash
+rustup target add x86_64-unknown-linux-musl
+```  
+```bash
+cargo build --release --target x86_64-unknown-linux-musl
+```  
 3.Your binary file spawn in ```./target/x86_64-unknown-linux-musl/release/```  
-4. You can create desktop file in ~.config/autostart for execution file when turning on the computer.
+4. You can create desktop file in ~.config/autostart for execution file when turning on the computer.  
 
 ---
 
