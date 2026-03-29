@@ -1,6 +1,6 @@
 # 🖥️ EN-OS-Remote-Assistant
 
-[![Version](https://img.shields.io/badge/version-0.4-blue.svg)](https://github.com/yourusername/EN-OS-Remote-Assistant)
+[![Version](https://img.shields.io/badge/version-0.5-blue.svg)](https://github.com/yourusername/EN-OS-Remote-Assistant)
 [![Rust](https://img.shields.io/badge/language-Rust-orange.svg)](https://www.rust-lang.org/)
 [![License](https://img.shields.io/badge/license-AGPL-green.svg)](LICENSE)
 
@@ -8,9 +8,7 @@ Control your PC remotely via Telegram. A lightweight, Rust-based assistant that 
 
 > ⚠️ **SECURITY WARNING**  
 > This application grants **full control** over your computer to anyone who has access to your Telegram bot. 
-> - Ensure your `TELOXIDE_TOKEN` is kept secret.
-> - The `ID` restriction is your primary security layer. **Do not share your bot with others.**
-> - Do not run this on a machine containing sensitive data unless you trust the environment.
+> DO NOT GIVE ANYONE ACCESS TO YOUR TELEGRAM ACCOUNT,Otherwise, the attacker will gain full access and control over the computer.
 
 ---
 
@@ -18,18 +16,21 @@ Control your PC remotely via Telegram. A lightweight, Rust-based assistant that 
 
 - **🚀 Command Execution:** Run system commands directly from Telegram (non-sudo).
 - **📸 Screenshots:** Capture and view your desktop instantly.
-- **📂 File Management:** Browse, view, and download files or folders (max size: 20MB).
+- **📂 File Management:** Browse, view, upload and download files or folders (max size: 20MB).
 - **🌐 Display Server Support:** Compatible with both **Wayland** and **X11**.
 - **🌍 Bilingual:** Interface available in **English** and **Russian**.
 - **⌨️ Input emulate:** Emulate keyboard input via **ydotool**.
 - **🦀 Written in Rust:** Fast, memory-safe, and reliable.
+- **⚡ Proxy support:** Support HTTP and SOCKS5 proxies.
+- **🔌 Power management:** Turn it off, reboot, put it to sleep and hibernate your PC.
+- **🧩 Convenient control via a Telegram bot** I have tried to create a user-friendly and uncluttered control panel.
 
 ---
 
 ## 🛠️ Prerequisites
 
 Before building, ensure you have the following installed:
-- [Rust & Cargo](https://rustup.rs/)
+- [Rustup](https://rustup.rs/)
 - [Ydotool](https://github.com/ReimuNotMoe/ydotool)
 - [Scrot](https://github.com/resurrecting-open-source-projects/scrot) (if you use x11)
 - A Telegram Bot Token (get it from [@BotFather](https://t.me/BotFather))
@@ -52,15 +53,19 @@ Create a `.env` file in the root directory and add your credentials:
 TELOXIDE_TOKEN=YOUR_BOT_TOKEN_HERE
 ID=123456789
 ```
+The .env file must be in the same folder as the binary or in the folder where you run the program through the terminal.
 
 > 🔒 **Tip:** Add `.env` to your `.gitignore` file to prevent accidentally committing secrets to GitHub.
 
 ### 3. Build and Run
-1: Install ```cargo``` and ```ydotool```  
-2: Compile the project using build script: 
-```
-bash build.sh
-```
+1: Install ```Rustup```, ```ydotool``` and ```scrot``` (if you have x11 environment)
+2: Set up the Ydotool  
+```soon```
+2: Compile the project:
+```rustup target add x86_64-unknown-linux-musl```  
+```cargo build --release --target x86_64-unknown-linux-musl```  
+3.Your binary file spawn in ```./target/x86_64-unknown-linux-musl/release/```  
+4. You can create desktop file in ~.config/autostart for execution file when turning on the computer.
 
 ---
 
