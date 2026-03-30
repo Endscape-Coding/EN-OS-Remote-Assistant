@@ -8,7 +8,7 @@ Control your PC remotely via Telegram. A lightweight, Rust-based assistant that 
 
 > ⚠️ **SECURITY WARNING**  
 > This application grants **full control** over your computer to anyone who has access to your Telegram bot. 
-> DO NOT GIVE ANYONE ACCESS TO YOUR TELEGRAM ACCOUNT,Otherwise, the attacker will gain full access and control over the computer.
+> DO NOT GIVE ANYONE ACCESS TO YOUR TELEGRAM ACCOUNT. Otherwise, the attacker will gain full access and control over the computer.
 
 ---
 
