@@ -219,12 +219,12 @@ pub const INMENUEN: &str = r#"
 
 pub const INERRRU: &str = r#"
 ❌ <b>Ydtool настроен некорректно</b>
-<i>Руководство по настройке скоро появится. Пока что проверьте установку утилиты.</i>
+<i>Руководство по настройке: https://github.com/Endscape-Coding/EN-OS-Remote-Assistant?tab=readme-ov-file#3-build-and-run</i>
 "#;
 
 pub const INERREN: &str = r#"
 ❌ <b>Ydtool is not configured correctly</b>
-<i>Setup guide coming soon. For now, please verify the utility installation.</i>
+<i>Setup guide: https://github.com/Endscape-Coding/EN-OS-Remote-Assistant?tab=readme-ov-file#3-build-and-run</i>
 "#;
 
 pub const INEXECRU: &str = r#"⌨️ Эмулирую:"#;
