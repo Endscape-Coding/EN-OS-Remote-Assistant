@@ -8,7 +8,7 @@ use teloxide::prelude::*;
 use teloxide::types::{KeyboardButton, KeyboardMarkup};
 use crate::handlers::{data, get_config};
 
-//Start - Самая база, справка
+///Start - Самая база, справка
 pub async fn start(bot: Bot, msg: Message) -> io::Result<()> {
     log::info!("Command: start <3");
 

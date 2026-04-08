@@ -2,7 +2,7 @@
 //! Other - вспомогательные функции.  
 //! Здесь собраны функции, которые используются несколькими модулями сразу.
 //! 
-use std::{io, result};
+use std::io;
 use std::process::Command;
 use teloxide::{Bot, prelude::*};
 use tokio::time::{Duration};

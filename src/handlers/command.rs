@@ -11,7 +11,10 @@ use crate::Botcommand;
 use crate::handlers::{get_config, data};
 use crate::handlers::other::send;
 
-/// Command - справочник по работе с командами.
+/// Command - справочник по работе с командами.  
+///   
+/// Пример команды: ```/command```
+/// 
 pub async fn command(bot: Bot, msg: Message) -> io::Result<()> {
     log::info!("Command: command");
 
@@ -40,7 +43,11 @@ pub async fn command(bot: Bot, msg: Message) -> io::Result<()> {
     Ok(())
 }
 
-/// Cmd spawn, то есть не выдает output, зато бот отвечает во время выполнения.
+///
+/// Cmd spawn, то есть не выдает output, зато бот отвечает во время выполнения.  
+///  
+/// Пример команды: ```/cmd_spawn <команда>```  
+/// 
 pub async fn cmd(bot: Bot, msg: Message, command: Botcommand) -> io::Result<()> {
     match command {
         Botcommand::Cmd(args) => {
@@ -79,7 +86,10 @@ pub async fn cmd(bot: Bot, msg: Message, command: Botcommand) -> io::Result<()> 
     }
 }
 
-/// Cmd output: Ждет завершения программы или таймаута.
+/// Cmd output: Ждет завершения программы или таймаута.  
+///    
+/// Пример команды: ```/cmd_output <команда>```
+/// 
 pub async fn cmd_output(bot: Bot, msg: Message, command: Botcommand) -> io::Result<()> {
     match command {
         Botcommand::CmdOutput(args) => {

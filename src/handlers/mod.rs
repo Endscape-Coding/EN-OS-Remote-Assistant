@@ -8,6 +8,14 @@ pub mod data;
 pub mod start;
 pub use start::start;
 
+/// Информация о программе и системе
+pub mod info;
+pub use info::info;
+
+/// Получение логов
+pub mod log;
+pub use log::log;
+
 /// Настройки (файл settings.rs)
 pub mod settings;
 pub use settings::{settings, set_cmd_timeout, set_notify};

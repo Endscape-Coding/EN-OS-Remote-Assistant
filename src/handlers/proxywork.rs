@@ -9,7 +9,7 @@ use tokio::fs;
 use reqwest::{Client, Proxy};
 
 /// Чтение прокси из файла и запись в массив
-async fn proxyfile(path: &str, proxy_type: &str) -> Vec<String> {
+async fn proxyfile(path: &str) -> Vec<String> {
     let mut proxies = Vec::new();
 
     match fs::read_to_string(path).await {
@@ -23,7 +23,7 @@ async fn proxyfile(path: &str, proxy_type: &str) -> Vec<String> {
             log::info!("Loaded {} proxies", proxies.len() )
         }
         Err(e) => {
-            log::warn!("")
+            log::warn!("Error load proxies! Error: {}", e)
         }
 
     }
@@ -40,7 +40,7 @@ pub async fn proxy_work() -> Client {
 
     match env::var("SOCKS5_PROXY_PATH") {
         Ok(path) => {
-            let socks_list = proxyfile(&path, "SOCKS").await;
+            let socks_list = proxyfile(&path).await;
             for proxy in socks_list {
                 lists.push((proxy, "SOCKS"));
             }
@@ -50,7 +50,7 @@ pub async fn proxy_work() -> Client {
 
     match env::var("HTTP_PROXY_PATH") {
         Ok(path) => {
-            let http_list = proxyfile(&path, "HTTP").await;
+            let http_list = proxyfile(&path).await;
             for proxy in http_list {
                 lists.push((proxy, "HTTP"));
             }

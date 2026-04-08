@@ -1,16 +1,21 @@
 //! Переводы
 //! Доступные языки: Английский и Русский.
+//! 
 //! Переводом занимался я, но кое что подправляла ИИшка.
 pub const LIMIT: usize = 4096;
+
+pub const VERSION: f64 = 0.6;
+
+pub const LOG_PATH: &str = "/var/log/en-os/remote_assistant/bot.log";
 pub const ONRU: &str = r#"
-<b>EN-OS Remote Assistant v0.4</b>
+<b>EN-OS Remote Assistant v0.6</b>
 
 ✅ Всё готово к работе!
 Нажмите /start или /help, чтобы увидеть доступные команды.
 "#;
 
 pub const ONEN: &str = r#"
-<b>EN-OS Remote Assistant v0.5</b>
+<b>EN-OS Remote Assistant v0.6</b>
 
 ✅ System is ready to go!
 Use /start or /help to view available commands.
@@ -18,12 +23,13 @@ Use /start or /help to view available commands.
 
 /// Help / Start
 pub const STARTRU: &str = r#"
-<b>EN-OS Remote Assistant v0.5</b>
+<b>EN-OS Remote Assistant v0.6</b>
 <i>Удалённое управление вашей системой через Telegram</i>
 
 📋 <b>Доступные команды:</b>
 
 • /start | /help — показать эту справку
+• /info — информация о компьютере и программе 
 • /settings — настройка remote assistant
 • /setlang — изменить язык интерфейса
 • /filemanager — управление файлами
@@ -38,12 +44,13 @@ pub const STARTRU: &str = r#"
 "#;
 
 pub const STARTEN: &str = r#"
-<b>EN-OS Remote Assistant v0.3</b>
+<b>EN-OS Remote Assistant v0.6</b>
 <i>Remote system control via Telegram</i>
 
 📋 <b>Available commands:</b>
 
-• /start | /help — show this help message
+• /start | /help — show this help 
+• /info — PC and program information
 • /settings — remote assistant settings
 • /setlang — change interface language
 • /filemanager — file management
@@ -57,25 +64,42 @@ pub const STARTEN: &str = r#"
 🟢 <i>System is active and ready for commands</i>
 "#;
 
+/// Info
+pub const INFORU: &str = r#"
+<b>Информация</b>
+"#;
+
+pub const INFOEN: &str = r#"
+<b>Информация</b>
+"#;
+
 /// Settings
 pub const SETTINGSRU: &str = r#"
-<b>EN-OS Remote Assistant v0.5</b>
+<b>EN-OS Remote Assistant v0.6</b>
 Настройки
 
 • /setlang - Выбор языка
 • /set_timeout &lt;сек&gt; - Таймаут для команды в cmd_output
 • /set_notify - Включить/выключить уведомления
+• /log - Получить логи
 "#;
 
 pub const SETTINGSEN: &str = r#"
-<b>EN-OS Remote Assistant v0.5</b>
+<b>EN-OS Remote Assistant v0.6</b>
 Settings
 
 • /setlang - Change language
 • /set_timeout &lt;сек&gt; - cmd_output timeout
-• /set_+notify - Turn on/off notification at the start.
-
+• /set_notify - Turn on/off notification at the start.
+• /log - Get logs
 "#;
+
+/// Log
+pub const LOGRU: &str = r#"Логи программы:"#;
+pub const LOGEN: &str = r#"Program logs:"#;
+
+pub const LOGERRRU: &str = r#"Логи не найдены..."#;
+pub const LOGERREN: &str = r#"Logs not found..."#;
 
 /// Screenshot
 pub const SCREENRU: &str = r#"📸 Вот ваш скриншот:"#;
@@ -219,12 +243,12 @@ pub const INMENUEN: &str = r#"
 
 pub const INERRRU: &str = r#"
 ❌ <b>Ydtool настроен некорректно</b>
-<i>Руководство по настройке: https://github.com/Endscape-Coding/EN-OS-Remote-Assistant?tab=readme-ov-file#3-build-and-run</i>
+Установите и настройте Ydotool по <a href='https://github.com/Endscape-Coding/EN-OS-Remote-Assistant/tree/main?tab=readme-ov-file#3-build-and-run'>гайду (тык)</a>, или переустановите Remote Assistant через <a href='https://github.com/Endscape-Coding/EN-OS-Remote-Assistant-Creator'>Remote Assistant Creator (тык)</a>
 "#;
 
 pub const INERREN: &str = r#"
-❌ <b>Ydtool is not configured correctly</b>
-<i>Setup guide: https://github.com/Endscape-Coding/EN-OS-Remote-Assistant?tab=readme-ov-file#3-build-and-run</i>
+❌ **Ydtool is not configured correctly**
+Install and configure Ydtool by following the \<a href='[https://github.com/Endscape-Coding/EN-OS-Remote-Assistant/tree/main?tab=readme-ov-file\#3-build-and-run](https://github.com/Endscape-Coding/EN-OS-Remote-Assistant/tree/main?tab=readme-ov-file#3-build-and-run)'\>guide (click)\</a\>, or reinstall Remote Assistant via \<a href='[https://github.com/Endscape-Coding/EN-OS-Remote-Assistant-Creator](https://github.com/Endscape-Coding/EN-OS-Remote-Assistant-Creator)'\>Remote Assistant Creator (click)\</a\>
 "#;
 
 pub const INEXECRU: &str = r#"⌨️ Эмулирую:"#;

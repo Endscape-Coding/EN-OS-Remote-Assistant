@@ -1,6 +1,8 @@
 //!
 //! Screen - Работа со скриншотами.  
 //! Позволяет делать скриншоты как в wayland, так и в X11 графических оболочках.  
+//!   
+//! Пример команды: ```/screenshot```
 //! 
 use std::env;
 use std::fs;
@@ -80,7 +82,7 @@ pub async fn screen(bot: Bot, msg: Message) -> io::Result<()> {
                 .send_chat_action(msg.chat.id, ChatAction::UploadPhoto)
                 .await;
 
-            log::info!("Screen saved to: {}", path.display());
+            log::info!("Screenshot saved to: {}", path.display());
             let photo = InputFile::file(&path);
 
             let message = if config.lang == "ru" {
@@ -147,7 +149,7 @@ async fn screenshot() -> io::Result<PathBuf> {
     let path = url
         .to_file_path()
         .map_err(|_| std::io::Error::new(std::io::ErrorKind::NotFound, "Not a file URI"))?;
-    log::info!("Path: {}", path.display());
+    log::info!("Screenshot path: {}", path.display());
 
     Ok(path)
 }
@@ -167,6 +169,7 @@ async fn screenshot_x11() -> io::Result<PathBuf> {
     Command::new("scrot").arg(&screen).status()?;
 
     let path = Path::new(&screen);
+    log::info!("Screenshot (x11) path: {}", path.display());
     Ok(path.to_path_buf())
 }
 

@@ -1,7 +1,9 @@
 //!
 //! Настройки - работа с конфигом.  
-//! Позволяет менять язык, уведомления (включить/выключить) и менять timeout на ```/cmd_output```
-//!
+//! Позволяет менять язык, уведомления (включить/выключить) и менять timeout на ```/cmd_output```  
+//! 
+//! Пример команды: ```/settings```
+//! 
 use std::io;
 use teloxide::prelude::*;
 use crate::Botcommand;
@@ -52,10 +54,12 @@ async fn send_config(bot: Bot, msg: Message) -> io::Result<()> {
 pub async fn set_cmd_timeout(bot: Bot, msg: Message, command: Botcommand) -> io::Result<()> {
     match command {
         Botcommand::SetTimeout(args) => {
+            /*
             let config = match get_config(bot.clone(), msg.chat.id).await {
                 Some(c) => c,
                 None => return Ok(()),
             };
+            */
 
             if let Ok(mut config) = config_read() {
                 config.cmd_timeout = args;

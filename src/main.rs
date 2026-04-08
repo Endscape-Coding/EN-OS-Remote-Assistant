@@ -12,7 +12,7 @@ use teloxide::prelude::*;
 use teloxide::types::Message;
 use teloxide::utils::command::BotCommands;
 use teloxide::types::BotCommand;
-use crate::handlers::{data, notify, wait_network, proxy_work};
+use crate::handlers::{data, notify, wait_network, proxy_work, config_read};
 use rust_embed::RustEmbed;
 
 #[derive(RustEmbed)]
@@ -22,7 +22,6 @@ struct Asset;
 
 mod handlers;
 
-const VERSION: f64 = 0.5;
 const RETRIES: u32 = 15;
 
 ///Команды для ботов
@@ -63,6 +62,10 @@ enum Botcommand {
     Start,
     /// Главная команда/справка
     Help,
+    /// Информация о программе и компьютере
+    Info,
+    /// Получение логов
+    Log,
     /// Настройки бота: выбор языка, настрйока уведомлений, изменения таймаута
     Settings,
     /// Настройка уведомлений (включить/выключить)
@@ -88,7 +91,7 @@ enum Botcommand {
 async fn main() {
     let message;
     dotenvy::dotenv().expect("Failed foad from .env file");
-    println!("EN-OS Remote Assistant v{}", VERSION);
+    println!("EN-OS Remote Assistant v{}", data::VERSION);
 
     let log_config = Asset::get("log4rs.yaml").expect("Failed to find log4rs.yaml in assets");
 
@@ -184,6 +187,8 @@ async fn main() {
                         )
                         .branch(dptree::case![Botcommand::Start].endpoint(handlers::start))
                         .branch(dptree::case![Botcommand::Help].endpoint(handlers::start))
+                        .branch(dptree::case![Botcommand::Info].endpoint(handlers::info))
+                        .branch(dptree::case![Botcommand::Log].endpoint(handlers::log))
                         .branch(dptree::case![Botcommand::Settings].endpoint(handlers::settings))
                         .branch(dptree::case![Botcommand::SetNotify].endpoint(handlers::set_notify))
                         .branch(dptree::case![Botcommand::Setlang].endpoint(handlers::setlang))
@@ -263,15 +268,38 @@ async fn main() {
 
 /// Устанавливает комманды в меню.
 async fn setcommand(bot: &Bot) {
-    let commands = vec![
-        BotCommand::new("start", "Help"),
-        BotCommand::new("filemanager", "Work with files"),
-        BotCommand::new("command", "Exec commands"),
-        BotCommand::new("powerman", "Power manager"),
-        BotCommand::new("screenshot", "Get screenshot"),
-        BotCommand::new("settings", "Remote Assistant settings"),
-        BotCommand::new("info", "О программе"),
-    ];
+    let config = match config_read() {
+        Ok(config) => config,
+        Err(e) => {
+            log::error!("Config read failed: {}", e);
+            return;
+        }
+    };
+
+    let commands = match config.lang.as_str() {
+        "ru" | "ua" =>
+            vec![
+                BotCommand::new("start", "Справка"),
+                BotCommand::new("filemanager", "Работа с файлами"),
+                BotCommand::new("command", "Запуск команд"),
+                BotCommand::new("powerman", "Power manager"),
+                BotCommand::new("screenshot", "Получить скриншот"),
+                BotCommand::new("settings", "Настройки Remote Assistant"),
+                BotCommand::new("log", "Получить логи Remote Assistant"),
+                BotCommand::new("info", "О программе"),
+            ],
+        _ =>
+            vec![
+                BotCommand::new("start", "Help"),
+                BotCommand::new("filemanager", "Work with files"),
+                BotCommand::new("command", "Exec commands"),
+                BotCommand::new("powerman", "Power manager"),
+                BotCommand::new("screenshot", "Get screenshot"),
+                BotCommand::new("settings", "Remote Assistant settings"),
+                BotCommand::new("log", "Remote Assistants logs"),
+                BotCommand::new("info", "О программе"),
+            ],
+    };
 
     match bot.set_my_commands(commands).await {
         Ok(_) => log::info!("Set command menu"),
