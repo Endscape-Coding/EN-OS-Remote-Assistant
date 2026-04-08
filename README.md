@@ -1,6 +1,6 @@
 # 🖥️ EN-OS-Remote-Assistant
 
-[![Version](https://img.shields.io/badge/version-0.4-blue.svg)](https://github.com/yourusername/EN-OS-Remote-Assistant)
+[![Version](https://img.shields.io/badge/version-0.6-blue.svg)](https://github.com/yourusername/EN-OS-Remote-Assistant)
 [![Rust](https://img.shields.io/badge/language-Rust-orange.svg)](https://www.rust-lang.org/)
 [![License](https://img.shields.io/badge/license-AGPL-green.svg)](LICENSE)
 
