@@ -82,3 +82,7 @@ Distributed under the AGPL License. See `LICENSE` for more information.
 Endscape - [@Linux_EN_OS](https://t.me/Linux_EN_OS) - endscape.coding@gmail.com
 
 Project Link: [https://github.com/yourusername/EN-OS-Remote-Assistant](https://github.com/yourusername/EN-OS-Remote-Assistant)
+
+---
+
+> **Developed with ❤️ as part of the EN-OS project** \> *Author: [Endscape](https://github.com/Endscape-Coding)*
