@@ -28,6 +28,8 @@ Control your PC remotely via Telegram. A lightweight, Rust-based assistant that 
 
 ## 🛠️ Prerequisites
 
+You can use [Remote Assistant Creator](https://github.com/Endscape-Coding/EN-OS-Remote-Assistant-Creator/releases/tag/v0.2.0) for build and configure my program.  
+
 Before building, ensure you have the following installed:
 - [Rust & Cargo](https://rustup.rs/)
 - [Ydotool](https://github.com/ReimuNotMoe/ydotool)
